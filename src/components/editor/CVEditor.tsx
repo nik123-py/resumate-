@@ -1,4 +1,13 @@
-import React, { useState, useCallback } from 'react';
+/**
+ * CVEditor.tsx
+ * -----------------------------------------------
+ * Main CV editor page. Includes drag-and-drop
+ * section reordering, live preview, and the
+ * ProgressSidebar for session tracking.
+ * -----------------------------------------------
+ */
+
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -18,13 +27,18 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Save, Settings, Download, Share2, Eye, ArrowLeft } from 'lucide-react';
+import { Download, Eye, ArrowLeft } from 'lucide-react';
 import { useCV } from '../../contexts/CVContext';
+import { useSession } from '../../contexts/SessionContext';
 import { SectionEditor } from './SectionEditor';
+import { ProgressSidebar } from './ProgressSidebar';
 import { CVPreview } from '../preview/CVPreview';
 import { Button } from '../ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { globalSessionService } from '../../services/globalSessionService';
 import type { CVSection } from '../../types';
+
+// -- Sortable section wrapper --
 
 interface SortableSectionProps {
   section: CVSection;
@@ -55,7 +69,12 @@ function SortableSection({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      data-section-id={section.type}
+    >
       <SectionEditor
         section={section}
         isExpanded={isExpanded}
@@ -68,11 +87,15 @@ function SortableSection({
   );
 }
 
+// -- Main Editor Component --
+
 export function CVEditor() {
   const navigate = useNavigate();
   const { currentCV, updateCV, reorderSections, updateSection } = useCV();
+  const { setPatch, pushAction } = useSession();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['contact']));
   const [showPreview, setShowPreview] = useState(true);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -81,29 +104,52 @@ export function CVEditor() {
     })
   );
 
+  // Track scroll position for session recovery
+  useEffect(() => {
+    const editorEl = editorRef.current;
+    if (!editorEl) return;
+
+    const handleScroll = () => {
+      setPatch({ scrollPosition: editorEl.scrollTop });
+    };
+
+    editorEl.addEventListener('scroll', handleScroll, { passive: true });
+    return () => editorEl.removeEventListener('scroll', handleScroll);
+  }, [setPatch]);
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id && currentCV) {
       const oldIndex = currentCV.sections.findIndex(section => section.id === active.id);
       const newIndex = currentCV.sections.findIndex(section => section.id === over.id);
-      
+
       const newSections = arrayMove(currentCV.sections, oldIndex, newIndex).map((section, index) => ({
         ...section,
         order: index
       }));
-      
+
       reorderSections(newSections);
+      pushAction('reordered_sections');
     }
-  }, [currentCV, reorderSections]);
+  }, [currentCV, reorderSections, pushAction]);
 
   const toggleExpanded = (sectionId: string) => {
     setExpandedSections(prev => {
       const newSet = new Set(prev);
       if (newSet.has(sectionId)) {
         newSet.delete(sectionId);
+        pushAction('section_collapsed', { section: sectionId });
       } else {
         newSet.add(sectionId);
+        pushAction('section_expanded', { section: sectionId });
+
+        // Track active section for recovery + global activity
+        const section = currentCV?.sections.find(s => s.id === sectionId);
+        if (section) {
+          setPatch({ activeSection: section.type });
+          globalSessionService.trackAction('/editor', 'section_edited', section.title);
+        }
       }
       return newSet;
     });
@@ -111,18 +157,18 @@ export function CVEditor() {
 
   const toggleSectionVisibility = (sectionId: string) => {
     if (!currentCV) return;
-    
+
     const updatedSections = currentCV.sections.map(section =>
       section.id === sectionId ? { ...section, visible: !section.visible } : section
     );
-    
+
     updateCV({ ...currentCV, sections: updatedSections });
   };
 
   const exportToPDF = async () => {
     const { jsPDF } = await import('jspdf');
     const html2canvas = (await import('html2canvas')).default;
-    
+
     const element = document.getElementById('cv-preview');
     if (!element) return;
 
@@ -132,14 +178,14 @@ export function CVEditor() {
         useCORS: true,
         backgroundColor: '#ffffff',
       });
-      
+
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4',
       });
-      
+
       const imgWidth = 210;
       const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -157,11 +203,14 @@ export function CVEditor() {
       }
 
       pdf.save(`${currentCV?.title || 'Resume'}.pdf`);
+      pushAction('exported_pdf');
+      globalSessionService.trackAction('/editor', 'pdf_exported', currentCV?.title || 'Resume');
     } catch (error) {
       console.error('Error generating PDF:', error);
     }
   };
 
+  // No CV selected state
   if (!currentCV) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -177,7 +226,7 @@ export function CVEditor() {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Header */}
+      {/* -- Editor Header Bar -- */}
       <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-lg border-b border-gray-700">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
@@ -200,7 +249,7 @@ export function CVEditor() {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
@@ -208,9 +257,6 @@ export function CVEditor() {
               className="p-2"
             >
               <Eye className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" className="p-2">
-              <Share2 className="w-5 h-5" />
             </Button>
             <Button onClick={exportToPDF} className="px-4">
               <Download className="w-4 h-4 mr-2" />
@@ -220,9 +266,16 @@ export function CVEditor() {
         </div>
       </div>
 
-      <div className="flex">
+      {/* -- Main Layout: Sidebar + Editor + Preview -- */}
+      <div className="flex" style={{ height: 'calc(100vh - 80px)' }}>
+        {/* Progress Sidebar */}
+        <ProgressSidebar />
+
         {/* Editor Panel */}
-        <div className={`${showPreview ? 'w-1/2' : 'w-full'} p-6 overflow-y-auto max-h-[calc(100vh-80px)]`}>
+        <div
+          ref={editorRef}
+          className={`${showPreview ? 'w-1/2' : 'flex-1'} p-6 overflow-y-auto`}
+        >
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -242,7 +295,11 @@ export function CVEditor() {
                       isExpanded={expandedSections.has(section.id)}
                       onToggleExpanded={() => toggleExpanded(section.id)}
                       onToggleVisibility={() => toggleSectionVisibility(section.id)}
-                      onUpdateData={(data) => updateSection(section.id, data)}
+                      onUpdateData={(data) => {
+                        updateSection(section.id, data);
+                        setPatch({ activeSection: section.type });
+                        pushAction('edited_field', { section: section.type });
+                      }}
                     />
                   ))}
               </div>
@@ -252,8 +309,8 @@ export function CVEditor() {
 
         {/* Preview Panel */}
         {showPreview && (
-          <div className="w-1/2 p-6 border-l border-gray-700 bg-gray-800/20">
-            <div className="sticky top-20">
+          <div className="w-1/2 p-6 border-l border-gray-700 bg-gray-800/20 overflow-y-auto">
+            <div className="sticky top-0">
               <CVPreview cv={currentCV} className="transform scale-75 origin-top" />
             </div>
           </div>

@@ -1,0 +1,2323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Resumate -- Session Intelligence & Recovery Wireframes</title>
+<style>
+  /* ============================================
+     GLOBAL RESET & VARIABLES
+     ============================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Dark theme palette */
+    --bg-deepest: #0a0e17;
+    --bg-dark: #0f1629;
+    --bg-card: #151d33;
+    --bg-card-hover: #1a2440;
+    --bg-elevated: #1e2a4a;
+    --bg-surface: #243054;
+    --bg-overlay: rgba(5, 8, 18, 0.85);
+
+    /* Accent palette */
+    --blue-primary: #3b82f6;
+    --blue-light: #60a5fa;
+    --blue-glow: rgba(59, 130, 246, 0.15);
+    --blue-subtle: rgba(59, 130, 246, 0.08);
+
+    --green: #22c55e;
+    --green-bg: rgba(34, 197, 94, 0.12);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245, 158, 11, 0.12);
+    --red: #ef4444;
+    --red-bg: rgba(239, 68, 68, 0.1);
+
+    /* Text */
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-dim: #475569;
+
+    /* Borders */
+    --border: rgba(148, 163, 184, 0.08);
+    --border-light: rgba(148, 163, 184, 0.15);
+    --border-accent: rgba(59, 130, 246, 0.3);
+
+    /* Radius */
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+    --r-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+    --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-deepest);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============================================
+     PAGE LAYOUT
+     ============================================ */
+  .page-wrapper {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 60px 40px 120px;
+  }
+
+  .page-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    background: linear-gradient(135deg, #f1f5f9, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 80px;
+    font-weight: 400;
+  }
+
+  .page-subtitle span {
+    color: var(--blue-light);
+    font-weight: 500;
+  }
+
+  /* ============================================
+     WIREFRAME SECTION
+     ============================================ */
+  .wireframe-section {
+    margin-bottom: 100px;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--blue-light);
+    background: var(--blue-subtle);
+    padding: 6px 14px;
+    border-radius: var(--r-full);
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 680px;
+    line-height: 1.7;
+  }
+
+  /* ============================================
+     DEVICE FRAME
+     ============================================ */
+  .device-frame {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+  }
+
+  .device-topbar {
+    height: 40px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #28c840; }
+
+  .device-url {
+    flex: 1;
+    margin-left: 12px;
+    background: var(--bg-elevated);
+    border-radius: var(--r-full);
+    height: 26px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .device-content {
+    min-height: 600px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ============================================
+     SHARED HEADER (inside wireframes)
+     ============================================ */
+  .app-header {
+    height: 56px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 24px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .app-logo {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--blue-primary), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .app-nav {
+    display: flex;
+    gap: 4px;
+    margin-left: 16px;
+  }
+
+  .app-nav-item {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: var(--r-sm);
+    cursor: default;
+    transition: all 0.15s;
+  }
+
+  .app-nav-item.active {
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+  }
+
+  .app-header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-primary), #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ============================================
+     BUTTONS
+     ============================================ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--r-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: default;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--blue-primary);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.35);
+  }
+
+  .btn-secondary {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: var(--r-sm);
+  }
+
+  .btn-xs {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: var(--r-sm);
+  }
+
+  /* ============================================
+     PROGRESS RING (SVG-based)
+     ============================================ */
+  .progress-ring-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .progress-ring-label {
+    position: absolute;
+    text-align: center;
+  }
+
+  .progress-ring-label .pct {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    display: block;
+    line-height: 1;
+  }
+
+  .progress-ring-label .pct-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ============================================
+     SCREEN 1: RECOVERY SCREEN
+     ============================================ */
+  .recovery-backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-overlay);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .recovery-modal {
+    width: 580px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    overflow: hidden;
+  }
+
+  .recovery-top {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.06));
+    padding: 32px 36px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .recovery-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue-light);
+    background: var(--blue-subtle);
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    margin-bottom: 16px;
+  }
+
+  .recovery-headline {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+
+  .recovery-subline {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .recovery-body {
+    padding: 28px 36px;
+  }
+
+  .recovery-grid {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 28px;
+    margin-bottom: 24px;
+  }
+
+  .recovery-ring-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .recovery-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .recovery-section-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .section-name {
+    font-size: 13px;
+    font-weight: 500;
+    width: 90px;
+    flex-shrink: 0;
+  }
+
+  .section-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-elevated);
+    border-radius: var(--r-full);
+    overflow: hidden;
+  }
+
+  .section-bar-fill {
+    height: 100%;
+    border-radius: var(--r-full);
+    transition: width 0.3s;
+  }
+
+  .section-pct {
+    font-size: 11px;
+    color: var(--text-muted);
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .recovery-last-edit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border-radius: var(--r-md);
+    margin-bottom: 16px;
+    border-left: 3px solid var(--blue-primary);
+  }
+
+  .recovery-last-edit-icon {
+    font-size: 16px;
+  }
+
+  .recovery-last-edit-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .recovery-last-edit-text strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .recovery-ai-nudge {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.06));
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: var(--r-md);
+    margin-bottom: 28px;
+  }
+
+  .ai-icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #8b5cf6, var(--blue-primary));
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .ai-nudge-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .recovery-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .recovery-actions .btn { flex: 1; }
+
+  /* ============================================
+     SCREEN 2: WELCOME BACK GUIDE
+     ============================================ */
+  .welcome-modal {
+    width: 520px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    overflow: hidden;
+  }
+
+  .welcome-top {
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .welcome-away {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--amber);
+    background: var(--amber-bg);
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  .welcome-headline {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .welcome-summary {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .welcome-body {
+    padding: 24px 32px 28px;
+  }
+
+  .welcome-last-page {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-elevated);
+    border-radius: var(--r-md);
+    margin-bottom: 20px;
+  }
+
+  .welcome-page-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--blue-subtle);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .welcome-page-info {
+    flex: 1;
+  }
+
+  .welcome-page-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+  }
+
+  .welcome-page-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .welcome-timeline {
+    margin-bottom: 20px;
+  }
+
+  .welcome-timeline-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    position: relative;
+  }
+
+  .timeline-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  .timeline-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--blue-primary);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .timeline-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border-light);
+    min-height: 16px;
+  }
+
+  .timeline-content {
+    flex: 1;
+  }
+
+  .timeline-action {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .timeline-time {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .welcome-suggestion {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 14px 16px;
+    background: var(--blue-subtle);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: var(--r-md);
+    margin-bottom: 24px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .welcome-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .welcome-actions .btn { flex: 1; }
+
+  /* ============================================
+     SCREEN 3: EDITOR + SIDEBAR
+     ============================================ */
+  .editor-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 600px;
+  }
+
+  .sidebar {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .sidebar-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  .sidebar-progress-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sidebar-section-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sidebar-section-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--r-md);
+    cursor: default;
+    transition: background 0.15s;
+  }
+
+  .sidebar-section-item:hover {
+    background: var(--bg-elevated);
+  }
+
+  .sidebar-section-item.active {
+    background: var(--blue-subtle);
+    border: 1px solid var(--border-accent);
+  }
+
+  .sidebar-section-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section-info {
+    flex: 1;
+  }
+
+  .sidebar-section-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .sidebar-section-bar {
+    height: 3px;
+    background: var(--bg-surface);
+    border-radius: var(--r-full);
+    overflow: hidden;
+  }
+
+  .sidebar-section-fill {
+    height: 100%;
+    border-radius: var(--r-full);
+  }
+
+  .sidebar-section-pct {
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .sidebar-timeline-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .sidebar-timeline-item {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .sidebar-timeline-time {
+    color: var(--text-dim);
+    width: 36px;
+    flex-shrink: 0;
+  }
+
+  /* Editor main area */
+  .editor-main {
+    padding: 32px 40px;
+    background: var(--bg-dark);
+    overflow-y: auto;
+  }
+
+  .editor-section-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .editor-section-card.active-section {
+    border-color: var(--border-accent);
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.15);
+  }
+
+  .editor-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editor-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .editor-section-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--r-full);
+  }
+
+  .editor-section-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .editor-section-body {
+    padding: 20px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-row.full {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-input {
+    height: 38px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 0 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+  }
+
+  .form-input.focused {
+    border-color: var(--blue-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+
+  .form-textarea {
+    min-height: 80px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .cursor-blink {
+    display: inline-block;
+    width: 1.5px;
+    height: 16px;
+    background: var(--blue-primary);
+    margin-left: 1px;
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* ============================================
+     SCREEN 4: INTERRUPTION TOASTS
+     ============================================ */
+  .toast-container {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+    min-width: 420px;
+    max-width: 540px;
+  }
+
+  .toast-offline {
+    background: linear-gradient(135deg, #422006, #1e1b4b);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+  }
+
+  .toast-idle {
+    background: linear-gradient(135deg, #0c1a3d, #1a1040);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+  }
+
+  .toast-reconnect {
+    background: linear-gradient(135deg, #052e16, #0a1628);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+  }
+
+  .toast-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .toast-icon-amber { background: var(--amber-bg); }
+  .toast-icon-blue { background: var(--blue-subtle); }
+  .toast-icon-green { background: var(--green-bg); }
+
+  .toast-text {
+    flex: 1;
+  }
+
+  .toast-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .toast-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .toast-dismiss {
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 4px 10px;
+    border-radius: var(--r-sm);
+    cursor: default;
+    flex-shrink: 0;
+  }
+
+  /* ============================================
+     SCREEN 5: DASHBOARD
+     ============================================ */
+  .dashboard-content {
+    padding: 32px 40px;
+    background: var(--bg-dark);
+    min-height: 600px;
+  }
+
+  .resume-card-highlight {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(139, 92, 246, 0.04));
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-lg);
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .resume-card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--blue-subtle);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .resume-card-info {
+    flex: 1;
+  }
+
+  .resume-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .resume-card-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+
+  .resume-card-progress {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .mini-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .mini-bar-track {
+    width: 60px;
+    height: 4px;
+    background: var(--bg-surface);
+    border-radius: var(--r-full);
+    overflow: hidden;
+  }
+
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: var(--r-full);
+  }
+
+  .pending-apps-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+
+  .pending-apps-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .pending-apps-icon {
+    font-size: 18px;
+  }
+
+  .pending-apps-title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .pending-apps-count {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--amber-bg);
+    color: var(--amber);
+    padding: 2px 8px;
+    border-radius: var(--r-full);
+  }
+
+  .pending-app-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+  }
+
+  .pending-app-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .pending-app-info {
+    flex: 1;
+  }
+
+  .pending-app-company {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .pending-app-role {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .pending-app-overdue {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .dashboard-grid-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .cv-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    transition: all 0.2s;
+  }
+
+  .cv-card:hover {
+    border-color: var(--border-light);
+    background: var(--bg-card-hover);
+  }
+
+  .cv-card-preview {
+    height: 120px;
+    background: var(--bg-elevated);
+    border-radius: var(--r-sm);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-size: 32px;
+  }
+
+  .cv-card-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .cv-card-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .cv-card-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .cv-card-new {
+    border: 2px dashed var(--border-light);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 220px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .cv-card-new-icon {
+    font-size: 36px;
+    color: var(--text-dim);
+  }
+
+  /* ============================================
+     SCREEN 6: DEVICE SWITCH
+     ============================================ */
+  .device-switch-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.06));
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .device-switch-icon {
+    font-size: 18px;
+  }
+
+  .device-switch-text strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .device-switch-dismiss {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: default;
+  }
+
+  /* ============================================
+     SCREEN 7: FLOW DIAGRAM
+     ============================================ */
+  .flow-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 48px;
+    position: relative;
+  }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr 80px 1fr;
+    grid-template-rows: auto 60px auto;
+    gap: 0;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .flow-node {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--r-lg);
+    padding: 20px 24px;
+    text-align: center;
+    width: 100%;
+    max-width: 260px;
+    position: relative;
+  }
+
+  .flow-node.highlight {
+    border-color: var(--border-accent);
+    box-shadow: var(--shadow-glow);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.04));
+  }
+
+  .flow-node-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .flow-node-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .flow-node-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--blue-primary);
+    opacity: 0.6;
+  }
+
+  .flow-arrow-down {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--blue-primary);
+    opacity: 0.6;
+  }
+
+  .flow-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ============================================
+     ANNOTATION LABELS
+     ============================================ */
+  .annotation {
+    position: absolute;
+    background: var(--amber);
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: var(--r-full);
+    z-index: 30;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+
+  /* ============================================
+     SPACING HELPERS
+     ============================================ */
+  .mt-40 { margin-top: 40px; }
+  .mb-16 { margin-bottom: 16px; }
+  .gap-8 { gap: 8px; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+
+  /* ============================================
+     TOAST SHOWCASE (stacked)
+     ============================================ */
+  .toast-showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 40px;
+    min-height: 600px;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-dark);
+  }
+
+  .toast-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    align-self: flex-start;
+    margin-left: calc(50% - 260px);
+  }
+
+  /* ============================================
+     PRINT / SCREENSHOT OPTIMIZATION
+     ============================================ */
+  @media print {
+    .page-wrapper { padding: 20px; }
+    .wireframe-section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ============================================
+       PAGE HEADER
+       ============================================ -->
+  <h1 class="page-title">Resumate -- Session Intelligence & Recovery</h1>
+  <p class="page-subtitle">Medium-Fidelity Wireframes &bull; <span>DesignBlitz Round 2</span> &bull; spine-hangar</p>
+
+
+  <!-- ============================================
+       SCREEN 1: RECOVERY SCREEN
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 01</div>
+    <h2 class="section-title">Recovery Screen -- Returning User Modal</h2>
+    <p class="section-desc">When a user returns after 2+ minutes away, this modal overlays the editor. It communicates progress, pinpoints where they left off, provides an AI-powered nudge, and offers one-click resumption.</p>
+
+    <div class="device-frame">
+      <div class="device-topbar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="device-url">&#9679; resumate.app/editor</div>
+      </div>
+      <div class="device-content">
+        <!-- Blurred background hint -->
+        <div class="app-header" style="opacity: 0.3;">
+          <span class="app-logo">Resumate</span>
+          <div class="app-nav">
+            <span class="app-nav-item">Dashboard</span>
+            <span class="app-nav-item active">Editor</span>
+            <span class="app-nav-item">Preview</span>
+            <span class="app-nav-item">AI</span>
+          </div>
+        </div>
+
+        <!-- Recovery overlay -->
+        <div class="recovery-backdrop">
+          <div class="recovery-modal">
+            <div class="recovery-top">
+              <div class="recovery-badge">&#8634; Session Recovery</div>
+              <h3 class="recovery-headline">Welcome back, Nikhil!</h3>
+              <p class="recovery-subline">You were away for <strong style="color: var(--text-primary);">2 hours 34 minutes</strong>. Your progress is safe.</p>
+            </div>
+            <div class="recovery-body">
+              <!-- Grid: Ring + Section list -->
+              <div class="recovery-grid">
+                <div class="recovery-ring-col">
+                  <div class="progress-ring-container">
+                    <svg width="130" height="130" viewBox="0 0 130 130">
+                      <!-- Track -->
+                      <circle cx="65" cy="65" r="56" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="10"/>
+                      <!-- Contact (100%) - Green -->
+                      <circle cx="65" cy="65" r="56" fill="none" stroke="#22c55e" stroke-width="10"
+                        stroke-dasharray="35.2 316.6" stroke-dashoffset="0"
+                        stroke-linecap="round" transform="rotate(-90 65 65)"/>
+                      <!-- Summary (75%) - Amber -->
+                      <circle cx="65" cy="65" r="56" fill="none" stroke="#f59e0b" stroke-width="10"
+                        stroke-dasharray="52.8 298.9" stroke-dashoffset="-35.2"
+                        stroke-linecap="round" transform="rotate(-90 65 65)"/>
+                      <!-- Experience (50%) - Amber -->
+                      <circle cx="65" cy="65" r="56" fill="none" stroke="#fb923c" stroke-width="10"
+                        stroke-dasharray="52.8 298.9" stroke-dashoffset="-88"
+                        stroke-linecap="round" transform="rotate(-90 65 65)"/>
+                      <!-- Education (100%) - Green -->
+                      <circle cx="65" cy="65" r="56" fill="none" stroke="#22c55e" stroke-width="10"
+                        stroke-dasharray="70.3 281.4" stroke-dashoffset="-140.8"
+                        stroke-linecap="round" transform="rotate(-90 65 65)"/>
+                      <!-- Skills (30%) - Gray -->
+                      <circle cx="65" cy="65" r="56" fill="none" stroke="#475569" stroke-width="10"
+                        stroke-dasharray="21.1 330.6" stroke-dashoffset="-211.1"
+                        stroke-linecap="round" transform="rotate(-90 65 65)"/>
+                    </svg>
+                    <div class="progress-ring-label">
+                      <span class="pct" style="color: var(--blue-light);">72%</span>
+                      <span class="pct-sub">Complete</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="recovery-sections">
+                  <!-- Contact -->
+                  <div class="recovery-section-row">
+                    <div class="section-dot" style="background: #22c55e;"></div>
+                    <span class="section-name">Contact</span>
+                    <div class="section-bar-track">
+                      <div class="section-bar-fill" style="width: 100%; background: #22c55e;"></div>
+                    </div>
+                    <span class="section-pct">100%</span>
+                  </div>
+                  <!-- Summary -->
+                  <div class="recovery-section-row">
+                    <div class="section-dot" style="background: #f59e0b;"></div>
+                    <span class="section-name">Summary</span>
+                    <div class="section-bar-track">
+                      <div class="section-bar-fill" style="width: 75%; background: #f59e0b;"></div>
+                    </div>
+                    <span class="section-pct">75%</span>
+                  </div>
+                  <!-- Experience -->
+                  <div class="recovery-section-row">
+                    <div class="section-dot" style="background: #fb923c;"></div>
+                    <span class="section-name">Experience</span>
+                    <div class="section-bar-track">
+                      <div class="section-bar-fill" style="width: 50%; background: #fb923c;"></div>
+                    </div>
+                    <span class="section-pct">50%</span>
+                  </div>
+                  <!-- Education -->
+                  <div class="recovery-section-row">
+                    <div class="section-dot" style="background: #22c55e;"></div>
+                    <span class="section-name">Education</span>
+                    <div class="section-bar-track">
+                      <div class="section-bar-fill" style="width: 100%; background: #22c55e;"></div>
+                    </div>
+                    <span class="section-pct">100%</span>
+                  </div>
+                  <!-- Skills -->
+                  <div class="recovery-section-row">
+                    <div class="section-dot" style="background: #475569;"></div>
+                    <span class="section-name">Skills</span>
+                    <div class="section-bar-track">
+                      <div class="section-bar-fill" style="width: 30%; background: #475569;"></div>
+                    </div>
+                    <span class="section-pct">30%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Last edit -->
+              <div class="recovery-last-edit">
+                <span class="recovery-last-edit-icon">&#9998;</span>
+                <span class="recovery-last-edit-text">Last edited: <strong>Experience &rarr; Job Description</strong> at Senior Developer, Tech Corp</span>
+              </div>
+
+              <!-- AI nudge -->
+              <div class="recovery-ai-nudge">
+                <div class="ai-icon">&#9733;</div>
+                <div class="ai-nudge-text">
+                  <strong style="color: #c4b5fd;">AI Suggestion:</strong> Your Skills section could be stronger. Try adding specific frameworks and tools (React, TypeScript, Node.js) to increase your credibility score.
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="recovery-actions">
+                <div class="btn btn-primary">&#9654; Resume Where I Left Off</div>
+                <div class="btn btn-secondary">&#8635; Start Fresh Review</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================
+       SCREEN 2: WELCOME BACK GUIDE
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 02</div>
+    <h2 class="section-title">Welcome Back Guide -- App-Level Re-entry</h2>
+    <p class="section-desc">Appears on any page when the user returns after closing the app. Independent of any specific resume -- it orients the user to the entire app state with a natural-language briefing.</p>
+
+    <div class="device-frame">
+      <div class="device-topbar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="device-url">&#9679; resumate.app/dashboard</div>
+      </div>
+      <div class="device-content">
+        <div class="app-header" style="opacity: 0.3;">
+          <span class="app-logo">Resumate</span>
+        </div>
+        <div class="recovery-backdrop">
+          <div class="welcome-modal">
+            <div class="welcome-top">
+              <div class="welcome-away">&#9200; Away for 3 hours</div>
+              <h3 class="welcome-headline">Welcome back, Nikhil!</h3>
+              <p class="welcome-summary">You were last on the <strong style="color: var(--text-primary);">Resume Editor</strong>, working on <strong style="color: var(--text-primary);">"Software Engineer CV"</strong>. You made edits to the Experience section and chatted with AI about summary improvements.</p>
+            </div>
+            <div class="welcome-body">
+              <!-- Last page card -->
+              <div class="welcome-last-page">
+                <div class="welcome-page-icon">&#9998;</div>
+                <div class="welcome-page-info">
+                  <div class="welcome-page-label">Last Page</div>
+                  <div class="welcome-page-name">Resume Editor -- "Software Engineer CV"</div>
+                </div>
+              </div>
+
+              <!-- Timeline -->
+              <div class="welcome-timeline">
+                <div class="welcome-timeline-title">Your Recent Activity</div>
+
+                <div class="timeline-item">
+                  <div class="timeline-dot-col">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-action">Edited Experience section</div>
+                    <div class="timeline-time">3 hours ago</div>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-dot-col">
+                    <div class="timeline-dot" style="background: #8b5cf6;"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-action">Chatted with AI Assistant</div>
+                    <div class="timeline-time">3 hours ago</div>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-dot-col">
+                    <div class="timeline-dot" style="background: #22c55e;"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-action">Added 4 skills to Skills section</div>
+                    <div class="timeline-time">3 hours ago</div>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-dot-col">
+                    <div class="timeline-dot" style="background: #f59e0b;"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-action">Created "Software Engineer CV"</div>
+                    <div class="timeline-time">4 hours ago</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Suggestion -->
+              <div class="welcome-suggestion">
+                "You were editing your resume. Pick up right where you left off -- your progress is saved and waiting."
+              </div>
+
+              <!-- Actions -->
+              <div class="welcome-actions">
+                <div class="btn btn-primary">&#9654; Continue to Editor</div>
+                <div class="btn btn-secondary">&#9776; Go to Dashboard</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================
+       SCREEN 3: EDITOR + PROGRESS SIDEBAR
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 03</div>
+    <h2 class="section-title">Editor with Progress Sidebar</h2>
+    <p class="section-desc">The main editing experience. The left sidebar provides persistent progress visibility, section navigation, and a live session timeline. The active section is highlighted with a blue accent.</p>
+
+    <div class="device-frame">
+      <div class="device-topbar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="device-url">&#9679; resumate.app/editor</div>
+      </div>
+      <div class="device-content">
+        <div class="app-header">
+          <span class="app-logo">Resumate</span>
+          <div class="app-nav">
+            <span class="app-nav-item">Dashboard</span>
+            <span class="app-nav-item active">Editor</span>
+            <span class="app-nav-item">Preview</span>
+            <span class="app-nav-item">AI</span>
+            <span class="app-nav-item">Applications</span>
+          </div>
+          <div class="app-header-right">
+            <div class="btn btn-xs" style="background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.2);">&#10003; Saved</div>
+            <div class="avatar">N</div>
+          </div>
+        </div>
+        <div class="editor-layout">
+          <!-- SIDEBAR -->
+          <div class="sidebar">
+            <div class="sidebar-title">Progress</div>
+
+            <div class="sidebar-progress-ring">
+              <div class="progress-ring-container">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="8"/>
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="var(--blue-primary)" stroke-width="8"
+                    stroke-dasharray="190 263.9" stroke-dashoffset="0"
+                    stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                </svg>
+                <div class="progress-ring-label">
+                  <span class="pct" style="font-size: 24px; color: var(--blue-light);">72%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sidebar-section-list">
+              <!-- Contact -->
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #22c55e;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Contact</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 100%; background: #22c55e;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">100%</span>
+              </div>
+              <!-- Summary -->
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #f59e0b;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Summary</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 75%; background: #f59e0b;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">75%</span>
+              </div>
+              <!-- Experience - Active -->
+              <div class="sidebar-section-item active">
+                <div class="sidebar-section-dot" style="background: #fb923c;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Experience</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 50%; background: #fb923c;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">50%</span>
+              </div>
+              <!-- Education -->
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #22c55e;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Education</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 100%; background: #22c55e;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">100%</span>
+              </div>
+              <!-- Skills -->
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #475569;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Skills</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 30%; background: #475569;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">30%</span>
+              </div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div>
+              <div class="sidebar-timeline-title">Session Timeline</div>
+              <div class="sidebar-timeline-item">
+                <span class="sidebar-timeline-time">2m</span>
+                <span>Edited experience description</span>
+              </div>
+              <div class="sidebar-timeline-item">
+                <span class="sidebar-timeline-time">5m</span>
+                <span>Updated professional summary</span>
+              </div>
+              <div class="sidebar-timeline-item">
+                <span class="sidebar-timeline-time">8m</span>
+                <span>Completed contact section</span>
+              </div>
+              <div class="sidebar-timeline-item">
+                <span class="sidebar-timeline-time">12m</span>
+                <span>Created resume</span>
+              </div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(59,130,246,0.05)); border-radius: var(--r-md); border: 1px solid rgba(139,92,246,0.12);">
+              <span style="font-size: 14px;">&#9733;</span>
+              <span style="font-size: 12px; color: var(--text-secondary);">2 AI suggestions</span>
+            </div>
+          </div>
+
+          <!-- EDITOR MAIN -->
+          <div class="editor-main">
+            <!-- Contact Section (collapsed preview) -->
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#9742; Contact Information
+                  <span class="editor-section-badge" style="background: var(--green-bg); color: var(--green);">Complete</span>
+                </div>
+                <div class="editor-section-actions">
+                  <div class="btn btn-ghost btn-xs">&#9660;</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#9998; Professional Summary
+                  <span class="editor-section-badge" style="background: var(--amber-bg); color: var(--amber);">75%</span>
+                </div>
+                <div class="editor-section-actions">
+                  <div class="btn btn-ghost btn-xs">&#9660;</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Experience Section (Active, expanded) -->
+            <div class="editor-section-card active-section">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#128188; Work Experience
+                  <span class="editor-section-badge" style="background: var(--amber-bg); color: #fb923c;">50%</span>
+                </div>
+                <div class="editor-section-actions">
+                  <div class="btn btn-ghost btn-xs">&#9650;</div>
+                </div>
+              </div>
+              <div class="editor-section-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Job Title</label>
+                    <div class="form-input">Senior Developer</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Company</label>
+                    <div class="form-input">Tech Corp</div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Start Date</label>
+                    <div class="form-input">Jan 2021</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">End Date</label>
+                    <div class="form-input" style="color: var(--text-muted);">Present</div>
+                  </div>
+                </div>
+                <div class="form-row full">
+                  <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <div class="form-textarea focused">
+                      Led the frontend team in rebuilding the customer portal using React and TypeScript, resulting in a 40% improvement in load times<span class="cursor-blink"></span>
+                    </div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                  <div class="btn btn-xs btn-secondary">+ Add Experience</div>
+                  <div class="btn btn-xs btn-ghost" style="color: #8b5cf6;">&#9733; AI Improve</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Education Section -->
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#127891; Education
+                  <span class="editor-section-badge" style="background: var(--green-bg); color: var(--green);">Complete</span>
+                </div>
+                <div class="editor-section-actions">
+                  <div class="btn btn-ghost btn-xs">&#9660;</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Skills Section -->
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#9881; Skills
+                  <span class="editor-section-badge" style="background: rgba(71,85,105,0.2); color: #64748b;">30%</span>
+                </div>
+                <div class="editor-section-actions">
+                  <div class="btn btn-ghost btn-xs">&#9660;</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================
+       SCREEN 4: INTERRUPTION TOASTS
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 04</div>
+    <h2 class="section-title">Interruption Toasts</h2>
+    <p class="section-desc">Non-blocking notifications that appear during interruptions. Each variant communicates the interruption type, reassures the user that data is preserved, and auto-dismisses appropriately.</p>
+
+    <div class="device-frame">
+      <div class="device-topbar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="device-url">&#9679; resumate.app/editor</div>
+      </div>
+      <div class="device-content">
+        <div class="toast-showcase">
+          <!-- Offline toast -->
+          <div class="toast-label">Connectivity Lost</div>
+          <div class="toast toast-offline">
+            <div class="toast-icon toast-icon-amber">&#9888;</div>
+            <div class="toast-text">
+              <div class="toast-title" style="color: var(--amber);">You're offline</div>
+              <div class="toast-desc">Your progress is saved locally and will sync automatically when you reconnect. Keep editing -- nothing will be lost.</div>
+            </div>
+          </div>
+
+          <div style="height: 20px;"></div>
+
+          <!-- Idle toast -->
+          <div class="toast-label">Idle Timeout (5 min)</div>
+          <div class="toast toast-idle">
+            <div class="toast-icon toast-icon-blue">&#9684;</div>
+            <div class="toast-text">
+              <div class="toast-title" style="color: var(--blue-light);">Session auto-saved</div>
+              <div class="toast-desc">You've been idle for 5 minutes. Your work is safely stored. You can close the tab and return anytime.</div>
+            </div>
+            <div class="toast-dismiss">Dismiss</div>
+          </div>
+
+          <div style="height: 20px;"></div>
+
+          <!-- Reconnect toast -->
+          <div class="toast-label">Back Online</div>
+          <div class="toast toast-reconnect">
+            <div class="toast-icon toast-icon-green">&#10003;</div>
+            <div class="toast-text">
+              <div class="toast-title" style="color: var(--green);">Back online</div>
+              <div class="toast-desc">Connection restored. Syncing your latest changes to the server...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================
+       SCREEN 5: DASHBOARD
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 05</div>
+    <h2 class="section-title">Dashboard with Resume Card & Pending Applications</h2>
+    <p class="section-desc">The dashboard greets returning users with a prominent "continue editing" card showing mini progress bars for each section. Below, a pending applications widget surfaces 24-hour overdue nudges.</p>
+
+    <div class="device-frame">
+      <div class="device-topbar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="device-url">&#9679; resumate.app/dashboard</div>
+      </div>
+      <div class="device-content">
+        <div class="app-header">
+          <span class="app-logo">Resumate</span>
+          <div class="app-nav">
+            <span class="app-nav-item active">Dashboard</span>
+            <span class="app-nav-item">Editor</span>
+            <span class="app-nav-item">Preview</span>
+            <span class="app-nav-item">AI</span>
+            <span class="app-nav-item">Applications</span>
+          </div>
+          <div class="app-header-right">
+            <div class="avatar">N</div>
+          </div>
+        </div>
+        <div class="dashboard-content">
+          <!-- Resume highlight card -->
+          <div class="resume-card-highlight">
+            <div class="resume-card-icon">&#9998;</div>
+            <div class="resume-card-info">
+              <div class="resume-card-title">Continue "Software Engineer CV" -- 72% complete</div>
+              <div class="resume-card-meta">Last edited 2 hours ago &bull; Experience &rarr; Job Description</div>
+              <div class="resume-card-progress">
+                <div class="mini-bar">
+                  <span>Contact</span>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width: 100%; background: #22c55e;"></div></div>
+                </div>
+                <div class="mini-bar">
+                  <span>Summary</span>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width: 75%; background: #f59e0b;"></div></div>
+                </div>
+                <div class="mini-bar">
+                  <span>Exp.</span>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width: 50%; background: #fb923c;"></div></div>
+                </div>
+                <div class="mini-bar">
+                  <span>Edu.</span>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width: 100%; background: #22c55e;"></div></div>
+                </div>
+                <div class="mini-bar">
+                  <span>Skills</span>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width: 30%; background: #475569;"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="btn btn-primary">&#9654; Continue</div>
+          </div>
+
+          <!-- Pending applications -->
+          <div class="pending-apps-card">
+            <div class="pending-apps-header">
+              <span class="pending-apps-icon">&#128276;</span>
+              <span class="pending-apps-title">Pending Applications</span>
+              <span class="pending-apps-count">2 overdue</span>
+            </div>
+            <div class="pending-app-row">
+              <div class="pending-app-logo" style="background: linear-gradient(135deg, #4285f4, #34a853);">G</div>
+              <div class="pending-app-info">
+                <div class="pending-app-company">Google</div>
+                <div class="pending-app-role">Frontend Engineer -- L4</div>
+              </div>
+              <span class="pending-app-overdue">26h overdue</span>
+              <div class="btn btn-xs btn-secondary">Open</div>
+            </div>
+            <div class="pending-app-row">
+              <div class="pending-app-logo" style="background: linear-gradient(135deg, #0668E1, #0050D1);">M</div>
+              <div class="pending-app-info">
+                <div class="pending-app-company">Meta</div>
+                <div class="pending-app-role">React Developer</div>
+              </div>
+              <span class="pending-app-overdue">3h overdue</span>
+              <div class="btn btn-xs btn-secondary">Open</div>
+            </div>
+          </div>
+
+          <!-- CV grid -->
+          <div class="dashboard-grid-title">
+            <span>Your Resumes</span>
+            <div style="display: flex; gap: 8px;">
+              <div class="btn btn-xs btn-secondary">&#9783; Grid</div>
+              <div class="btn btn-xs btn-ghost">&#9776; List</div>
+            </div>
+          </div>
+          <div class="cv-grid">
+            <div class="cv-card">
+              <div class="cv-card-preview">&#9744;</div>
+              <div class="cv-card-name">Software Engineer CV</div>
+              <div class="cv-card-date">Updated 2 hours ago</div>
+              <div class="cv-card-actions">
+                <div class="btn btn-xs btn-primary">Edit</div>
+                <div class="btn btn-xs btn-secondary">Preview</div>
+              </div>
+            </div>
+            <div class="cv-card">
+              <div class="cv-card-preview">&#9744;</div>
+              <div class="cv-card-name">Product Designer Resume</div>
+              <div class="cv-card-date">Updated 5 days ago</div>
+              <div class="cv-card-actions">
+                <div class="btn btn-xs btn-primary">Edit</div>
+                <div class="btn btn-xs btn-secondary">Preview</div>
+              </div>
+            </div>
+            <div class="cv-card cv-card-new">
+              <div class="cv-card-new-icon">+</div>
+              <span>New Resume</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================
+       SCREEN 6: DEVICE SWITCH
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 06</div>
+    <h2 class="section-title">Cross-Device Session Continuation</h2>
+    <p class="section-desc">When the system detects a session arriving from a different device, an informational banner appears at the top of the editor confirming the sync and showing the source device context.</p>
+
+    <div class="device-frame">
+      <div class="device-topbar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="device-url">&#9679; resumate.app/editor</div>
+      </div>
+      <div class="device-content">
+        <div class="app-header">
+          <span class="app-logo">Resumate</span>
+          <div class="app-nav">
+            <span class="app-nav-item">Dashboard</span>
+            <span class="app-nav-item active">Editor</span>
+            <span class="app-nav-item">Preview</span>
+            <span class="app-nav-item">AI</span>
+          </div>
+          <div class="app-header-right">
+            <div class="avatar">N</div>
+          </div>
+        </div>
+        <!-- Device switch banner -->
+        <div class="device-switch-banner">
+          <span class="device-switch-icon">&#128257;</span>
+          <span class="device-switch-text"><strong>Continuing from another device.</strong> Your latest changes from your laptop session have been merged. Last synced 14 minutes ago.</span>
+          <span class="device-switch-dismiss">&#10005; Dismiss</span>
+        </div>
+        <div class="editor-layout" style="min-height: 520px;">
+          <div class="sidebar">
+            <div class="sidebar-title">Progress</div>
+            <div class="sidebar-progress-ring">
+              <div class="progress-ring-container">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="8"/>
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="var(--blue-primary)" stroke-width="8"
+                    stroke-dasharray="190 263.9" stroke-dashoffset="0"
+                    stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                </svg>
+                <div class="progress-ring-label">
+                  <span class="pct" style="font-size: 24px; color: var(--blue-light);">72%</span>
+                </div>
+              </div>
+            </div>
+            <div class="sidebar-section-list">
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #22c55e;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Contact</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 100%; background: #22c55e;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">100%</span>
+              </div>
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #f59e0b;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Summary</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 75%; background: #f59e0b;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">75%</span>
+              </div>
+              <div class="sidebar-section-item active">
+                <div class="sidebar-section-dot" style="background: #fb923c;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Experience</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 50%; background: #fb923c;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">50%</span>
+              </div>
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #22c55e;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Education</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 100%; background: #22c55e;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">100%</span>
+              </div>
+              <div class="sidebar-section-item">
+                <div class="sidebar-section-dot" style="background: #475569;"></div>
+                <div class="sidebar-section-info">
+                  <div class="sidebar-section-name">Skills</div>
+                  <div class="sidebar-section-bar">
+                    <div class="sidebar-section-fill" style="width: 30%; background: #475569;"></div>
+                  </div>
+                </div>
+                <span class="sidebar-section-pct">30%</span>
+              </div>
+            </div>
+          </div>
+          <div class="editor-main">
+            <!-- Synced content indication -->
+            <div style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(59,130,246,0.04)); border: 1px solid rgba(139,92,246,0.15); border-radius: var(--r-md); margin-bottom: 20px;">
+              <span style="font-size: 14px;">&#128260;</span>
+              <span style="font-size: 13px; color: var(--text-secondary);">3 field changes synced from your other device</span>
+              <span style="margin-left: auto; font-size: 12px; color: var(--blue-light); cursor: default;">View changes</span>
+            </div>
+
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#9742; Contact Information
+                  <span class="editor-section-badge" style="background: var(--green-bg); color: var(--green);">Complete</span>
+                </div>
+              </div>
+            </div>
+            <div class="editor-section-card active-section">
+              <div class="editor-section-header">
+                <div class="editor-section-title">
+                  &#128188; Work Experience
+                  <span class="editor-section-badge" style="background: var(--amber-bg); color: #fb923c;">50%</span>
+                </div>
+              </div>
+              <div class="editor-section-body">
+                <div class="form-row full">
+                  <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <div class="form-textarea focused" style="min-height: 60px;">
+                      Led the frontend team in rebuilding the customer portal<span class="cursor-blink"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================
+       SCREEN 7: USER JOURNEY FLOW
+       ============================================ -->
+  <div class="wireframe-section">
+    <div class="section-label">&#9672; Screen 07</div>
+    <h2 class="section-title">Recovery & Resumption Flow</h2>
+    <p class="section-desc">The end-to-end journey from interruption to confident resumption. Each node represents a system decision point or user-facing screen. The flow shows how Resumate intelligently routes users through the minimal path back to productive work.</p>
+
+    <div class="flow-container">
+      <!-- Row 1: Interruption -> Detection -> Classification -->
+      <div style="display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center; margin-bottom: 40px;">
+        <div class="flow-node">
+          <div class="flow-node-icon">&#9889;</div>
+          <div class="flow-node-title">Interruption Occurs</div>
+          <div class="flow-node-desc">Tab closed, offline, idle 5min, device switch, or voluntary exit</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">&#9881;</div>
+          <div class="flow-node-title">Auto-Detection</div>
+          <div class="flow-node-desc">SessionService classifies interruption type and triggers immediate localStorage save</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">&#128190;</div>
+          <div class="flow-node-title">State Preserved</div>
+          <div class="flow-node-desc">Section, field, scroll, drafts, AI context, device ID, action log -- all persisted in &lt;100ms</div>
+        </div>
+      </div>
+
+      <!-- Connector down -->
+      <div style="text-align: center; margin-bottom: 40px;">
+        <span style="font-size: 28px; color: var(--blue-primary); opacity: 0.5;">&darr;</span>
+        <div class="flow-label">User returns (minutes, hours, or days later)</div>
+      </div>
+
+      <!-- Row 2: Return Detection -> Decision -> UI Response -->
+      <div style="display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center; margin-bottom: 40px;">
+        <div class="flow-node">
+          <div class="flow-node-icon">&#128065;</div>
+          <div class="flow-node-title">Return Detection</div>
+          <div class="flow-node-desc">GlobalSessionService checks lastActiveAt timestamp, compares deviceId, queries backend for newer state</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-node highlight">
+          <div class="flow-node-icon">&#9670;</div>
+          <div class="flow-node-title">Decision Engine</div>
+          <div class="flow-node-desc">
+            <div style="text-align: left; font-size: 11px; line-height: 1.8;">
+              <strong>&bull; Away &lt; 2min:</strong> Silent (no UI)<br>
+              <strong>&bull; Away &gt; 2min:</strong> Welcome Back Guide<br>
+              <strong>&bull; On /editor:</strong> + Recovery Screen<br>
+              <strong>&bull; Device mismatch:</strong> + Sync Banner<br>
+              <strong>&bull; Pending apps:</strong> + Nudge Widget
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">&#127912;</div>
+          <div class="flow-node-title">Tailored Re-entry UI</div>
+          <div class="flow-node-desc">Exactly the right overlay, banner, or widget -- never more than needed, never less</div>
+        </div>
+      </div>
+
+      <!-- Connector down -->
+      <div style="text-align: center; margin-bottom: 40px;">
+        <span style="font-size: 28px; color: var(--blue-primary); opacity: 0.5;">&darr;</span>
+        <div class="flow-label">User takes action (one click)</div>
+      </div>
+
+      <!-- Row 3: Resumption -->
+      <div style="display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; gap: 0; align-items: center;">
+        <div class="flow-node">
+          <div class="flow-node-icon">&#9654;</div>
+          <div class="flow-node-title">One-Click Resume</div>
+          <div class="flow-node-desc">Scroll to section, focus last field, restore draft text, show "Restored" tooltip</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-node highlight">
+          <div class="flow-node-icon">&#9998;</div>
+          <div class="flow-node-title">Productive in &lt;10 seconds</div>
+          <div class="flow-node-desc">User is typing in the exact field they left, with full context visible in sidebar. Zero cognitive overhead.</div>
+        </div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-node">
+          <div class="flow-node-icon">&#8634;</div>
+          <div class="flow-node-title">Continuous Protection</div>
+          <div class="flow-node-desc">10s autosave resumes, idle timer resets, action log appends. Ready for the next interruption.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <div style="text-align: center; padding: 60px 0 20px; border-top: 1px solid var(--border); margin-top: 40px;">
+    <div style="font-size: 20px; font-weight: 800; background: linear-gradient(135deg, #f1f5f9, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">Resumate</div>
+    <div style="font-size: 13px; color: var(--text-dim);">Session Intelligence & Recovery &bull; DesignBlitz Round 2 &bull; <span style="color: var(--blue-light);">spine-hangar</span></div>
+  </div>
+
+</div>
+</body>
+</html>

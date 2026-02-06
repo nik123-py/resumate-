@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, User, LogOut, Settings, Plus, Bot } from 'lucide-react';
+import { FileText, User, LogOut, Settings, Plus, Bot, Briefcase } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -71,6 +71,17 @@ export function Header() {
                 >
                   <Bot className="w-4 h-4" />
                   AI Assistant
+                </Link>
+                <Link 
+                  to="/applications" 
+                  className={`transition-colors flex items-center gap-2 ${
+                    location.pathname === '/applications' 
+                      ? 'text-purple-400' 
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
+                  <Briefcase className="w-4 h-4" />
+                  Applications
                 </Link>
               </nav>
             ) : (
