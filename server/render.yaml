@@ -1,0 +1,23 @@
+# Render Blueprint for Resumate Backend
+services:
+  - type: web
+    name: resumate-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: AUTH_TOKEN
+        value: resumate-hackathon-spine-hangar-2026
+      - key: DB_PATH
+        value: /data/resumate.db
+    disk:
+      name: resumate-data
+      mountPath: /data
+      sizeGB: 1

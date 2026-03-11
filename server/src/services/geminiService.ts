@@ -31,7 +31,7 @@ async function callGemini(prompt: string): Promise<string> {
     throw new Error('GEMINI_API_KEY is not configured');
   }
 
-  const url = `${BASE_URL}/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const url = `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
   const requestBody = JSON.stringify({
     contents: [

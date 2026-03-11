@@ -1,3 +1,11 @@
+/**
+ * Card.tsx
+ * -----------------------------------------------
+ * Surface container component. Uses warm slate
+ * tones, subtle border, no excessive blur.
+ * -----------------------------------------------
+ */
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -9,14 +17,18 @@ interface CardProps {
 
 export function Card({ children, className = '', hover = false }: CardProps) {
   const Component = hover ? motion.div : 'div';
-  const motionProps = hover ? {
-    whileHover: { scale: 1.02, y: -2 },
-    transition: { duration: 0.2 }
-  } : {};
+
+  /* -- Subtle lift on hover, no scale transform -- */
+  const motionProps = hover
+    ? {
+        whileHover: { y: -3 },
+        transition: { duration: 0.2 },
+      }
+    : {};
 
   return (
     <Component
-      className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 shadow-lg ${className}`}
+      className={`bg-surface-900 border border-slate-700/60 rounded-xl p-6 ${className}`}
       {...motionProps}
     >
       {children}

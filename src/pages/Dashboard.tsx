@@ -7,7 +7,7 @@
  * -----------------------------------------------
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Plus,
@@ -47,13 +47,13 @@ function MiniRing({ progress, size = 40 }: { progress: number; size?: number }) 
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle cx={center} cy={center} r={radius} fill="none" stroke="#1f2937" strokeWidth="3" />
+      <circle cx={center} cy={center} r={radius} fill="none" stroke="#1e293b" strokeWidth="3" />
       <circle
         cx={center}
         cy={center}
         r={radius}
         fill="none"
-        stroke="#7c3aed"
+        stroke="#14b8a6"
         strokeWidth="3"
         strokeLinecap="round"
         strokeDasharray={circumference}
@@ -131,14 +131,14 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
+    <div className="min-h-screen bg-surface-950 p-6">
       <div className="max-w-7xl mx-auto">
 
         {/* -- Header -- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-100 mb-2">My Resumes</h1>
-            <p className="text-gray-400">Create and manage your professional resumes</p>
+            <h1 className="text-2xl font-bold text-slate-100 mb-1">My Resumes</h1>
+            <p className="text-sm text-slate-400">Create and manage your professional resumes</p>
           </div>
 
           <div className="flex gap-3">
@@ -151,8 +151,8 @@ export function Dashboard() {
                 Applications ({inProgressApps})
               </Button>
             )}
-            <Button onClick={() => setShowTemplateModal(true)} size="lg">
-              <Plus className="w-5 h-5 mr-2" />
+            <Button onClick={() => setShowTemplateModal(true)}>
+              <Plus className="w-4 h-4 mr-2" />
               New Resume
             </Button>
           </div>
@@ -161,24 +161,24 @@ export function Dashboard() {
         {/* -- Recovery Card (shown above everything if active session exists) -- */}
         {hasActiveSession && lastActiveCV && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <Card className="p-5 border-purple-500/30 bg-gradient-to-r from-purple-900/20 to-gray-800/50">
+            <Card className="p-4 border-teal-600/30">
               <div className="flex items-center gap-4">
                 {/* Mini progress ring */}
                 <MiniRing progress={overallProgress} size={48} />
 
                 {/* Info */}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white">
+                  <h3 className="text-base font-semibold text-slate-100">
                     Continue your resume
                   </h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-slate-400">
                     {lastActiveCV.title}
                     {sessionData?.sessionTimestamps?.lastActive && (
-                      <span className="ml-2 text-gray-500">
+                      <span className="ml-2 text-slate-500">
                         -- last edited {timeAgo(sessionData.sessionTimestamps.lastActive)}
                       </span>
                     )}
@@ -187,6 +187,7 @@ export function Dashboard() {
 
                 {/* Resume button */}
                 <Button
+                  size="sm"
                   onClick={() => handleEditCV(lastActiveCV)}
                   className="flex items-center gap-2"
                 >
@@ -201,7 +202,7 @@ export function Dashboard() {
         {/* -- Pending Application Reminders -- */}
         {pendingReminders.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
@@ -212,7 +213,7 @@ export function Dashboard() {
                   <p className="text-sm text-amber-300">
                     {pendingReminders.length} application{pendingReminders.length > 1 ? 's' : ''} pending for over 24 hours
                   </p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     {pendingReminders.map(r => r.company).join(', ')}
                   </p>
                 </div>
@@ -232,7 +233,7 @@ export function Dashboard() {
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <Input
                 placeholder="Search resumes..."
                 value={searchQuery}
@@ -242,20 +243,20 @@ export function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Button
-              variant={viewMode === 'grid' ? 'primary' : 'ghost'}
+              variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
               onClick={() => setViewMode('grid')}
               className="p-2"
             >
-              <Grid className="w-5 h-5" />
+              <Grid className="w-4 h-4" />
             </Button>
             <Button
-              variant={viewMode === 'list' ? 'primary' : 'ghost'}
+              variant={viewMode === 'list' ? 'secondary' : 'ghost'}
               onClick={() => setViewMode('list')}
               className="p-2"
             >
-              <List className="w-5 h-5" />
+              <List className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -269,14 +270,14 @@ export function Dashboard() {
               viewMode === 'grid'
                 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                 : 'grid-cols-1'
-            } gap-6`}
+            } gap-5`}
           >
             {filteredCVs.map((cv, index) => (
               <motion.div
                 key={cv.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
               >
                 <CVCard
                   cv={cv}
@@ -290,13 +291,13 @@ export function Dashboard() {
           </motion.div>
         ) : (
           <Card className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Plus className="w-8 h-8 text-gray-400" />
+            <div className="w-14 h-14 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Plus className="w-6 h-6 text-slate-500" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-100 mb-2">
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">
               {searchQuery ? 'No resumes found' : 'No resumes yet'}
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-sm text-slate-400 mb-6">
               {searchQuery
                 ? 'Try adjusting your search terms'
                 : 'Create your first resume to get started'
@@ -304,7 +305,7 @@ export function Dashboard() {
             </p>
             {!searchQuery && (
               <Button onClick={() => setShowTemplateModal(true)}>
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 mr-2" />
                 Create Resume
               </Button>
             )}
@@ -320,11 +321,11 @@ export function Dashboard() {
         maxWidth="2xl"
       >
         <div className="space-y-6">
-          <p className="text-gray-400">
+          <p className="text-sm text-slate-400">
             Select a template to start building your resume. You can change it later.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {templates.map((template) => (
               <TemplateCard
                 key={template.id}
@@ -335,7 +336,7 @@ export function Dashboard() {
             ))}
           </div>
 
-          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-700">
+          <div className="flex justify-end space-x-3 pt-5 border-t border-slate-700/60">
             <Button variant="ghost" onClick={() => setShowTemplateModal(false)}>
               Cancel
             </Button>

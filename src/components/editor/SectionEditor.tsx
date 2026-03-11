@@ -62,8 +62,8 @@ export function SectionEditor({
           lastCursorField: `${section.type}_${fieldId}`,
         });
 
-        // Track globally for welcome-back briefing
-        globalSessionService.trackAction('/editor', 'section_edited', section.title);
+        // Track the exact edit location for welcome-back highlighting
+        globalSessionService.trackLastEdit(section.type, section.title, fieldId);
       }
     },
     [section.type, section.title, setPatch]
@@ -72,60 +72,35 @@ export function SectionEditor({
   const renderSectionContent = () => {
     switch (section.type) {
       case 'contact':
-        return (
-          <ContactSection
-            data={section.data}
-            onUpdate={onUpdateData}
-          />
-        );
+        return <ContactSection data={section.data} onUpdate={onUpdateData} />;
       case 'summary':
-        return (
-          <SummarySection
-            data={section.data}
-            onUpdate={onUpdateData}
-          />
-        );
+        return <SummarySection data={section.data} onUpdate={onUpdateData} />;
       case 'experience':
-        return (
-          <ExperienceSection
-            data={section.data}
-            onUpdate={onUpdateData}
-          />
-        );
+        return <ExperienceSection data={section.data} onUpdate={onUpdateData} />;
       case 'education':
-        return (
-          <EducationSection
-            data={section.data}
-            onUpdate={onUpdateData}
-          />
-        );
+        return <EducationSection data={section.data} onUpdate={onUpdateData} />;
       case 'skills':
-        return (
-          <SkillsSection
-            data={section.data}
-            onUpdate={onUpdateData}
-          />
-        );
+        return <SkillsSection data={section.data} onUpdate={onUpdateData} />;
       default:
-        return <div className="p-4 text-gray-400">Section type not implemented</div>;
+        return <div className="p-4 text-slate-400">Section type not implemented</div>;
     }
   };
 
   return (
-    <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg overflow-hidden">
+    <div className="bg-surface-900 border border-slate-700/60 rounded-xl overflow-hidden">
       {/* -- Section header bar -- */}
-      <div className="flex items-center justify-between p-4 bg-gray-800/30 border-b border-gray-700/50">
+      <div className="flex items-center justify-between p-4 border-b border-slate-800/60">
         <div className="flex items-center space-x-3">
           <button
             {...dragHandleProps}
-            className="text-gray-400 hover:text-gray-300 cursor-grab active:cursor-grabbing"
+            className="text-slate-500 hover:text-slate-300 cursor-grab active:cursor-grabbing"
           >
             <GripVertical className="w-5 h-5" />
           </button>
-          <h3 className="text-lg font-semibold text-gray-100">{section.title}</h3>
+          <h3 className="text-base font-semibold text-slate-100">{section.title}</h3>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <Button
             variant="ghost"
             size="sm"
@@ -155,10 +130,7 @@ export function SectionEditor({
 
       {/* -- Section content with focus tracking -- */}
       {isExpanded && (
-        <div
-          className="border-t border-gray-700/50"
-          onFocusCapture={handleFocusCapture}
-        >
+        <div onFocusCapture={handleFocusCapture}>
           {renderSectionContent()}
         </div>
       )}

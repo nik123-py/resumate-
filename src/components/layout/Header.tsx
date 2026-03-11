@@ -1,6 +1,14 @@
+/**
+ * Header.tsx
+ * -----------------------------------------------
+ * Top navigation bar. Clean, minimal design with
+ * teal active-link indicator. No gradient logos.
+ * -----------------------------------------------
+ */
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, User, LogOut, Settings, Plus, Bot, Briefcase } from 'lucide-react';
+import { FileText, User, LogOut, Settings, Bot, Briefcase } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
@@ -14,129 +22,103 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-gray-900/80 backdrop-blur-lg border-b border-gray-700/50">
+      <header className="sticky top-0 z-40 bg-surface-950/90 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to={isAuthenticated ? "/dashboard" : "/"}>
-              <motion.div 
-                className="flex items-center space-x-2"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between h-14">
+
+            {/* -- Logo / Brand -- */}
+            <Link to={isAuthenticated ? '/dashboard' : '/'}>
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
+                  <FileText className="w-4.5 h-4.5 text-white" />
                 </div>
-                <h1 className="text-xl font-bold text-gray-100">CV Builder</h1>
-              </motion.div>
+                <h1 className="text-lg font-semibold text-slate-100 tracking-tight">
+                  Resumate
+                </h1>
+              </div>
             </Link>
 
+            {/* -- Nav links (authenticated) -- */}
             {isAuthenticated ? (
-              <nav className="hidden md:flex items-center space-x-8">
-                <Link 
-                  to="/dashboard" 
-                  className={`transition-colors ${
-                    location.pathname === '/dashboard' 
-                      ? 'text-purple-400' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
+              <nav className="hidden md:flex items-center space-x-6">
+                <NavLink to="/dashboard" current={location.pathname}>
                   Dashboard
-                </Link>
-                <Link 
-                  to="/editor" 
-                  className={`transition-colors ${
-                    location.pathname === '/editor' 
-                      ? 'text-purple-400' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
+                </NavLink>
+                <NavLink to="/editor" current={location.pathname}>
                   Editor
-                </Link>
-                <Link 
-                  to="/preview" 
-                  className={`transition-colors ${
-                    location.pathname === '/preview' 
-                      ? 'text-purple-400' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
+                </NavLink>
+                <NavLink to="/preview" current={location.pathname}>
                   Preview
-                </Link>
-                <Link 
-                  to="/ai-assistant" 
-                  className={`transition-colors flex items-center gap-2 ${
-                    location.pathname === '/ai-assistant' 
-                      ? 'text-purple-400' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  <Bot className="w-4 h-4" />
+                </NavLink>
+                <NavLink to="/ai-assistant" current={location.pathname}>
+                  <Bot className="w-3.5 h-3.5 mr-1.5" />
                   AI Assistant
-                </Link>
-                <Link 
-                  to="/applications" 
-                  className={`transition-colors flex items-center gap-2 ${
-                    location.pathname === '/applications' 
-                      ? 'text-purple-400' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                >
-                  <Briefcase className="w-4 h-4" />
+                </NavLink>
+                <NavLink to="/applications" current={location.pathname}>
+                  <Briefcase className="w-3.5 h-3.5 mr-1.5" />
                   Applications
-                </Link>
+                </NavLink>
               </nav>
             ) : (
-              <nav className="hidden md:flex items-center space-x-8">
-                <a href="#templates" className="text-gray-300 hover:text-white transition-colors">
-                  Templates
-                </a>
-                <a href="#features" className="text-gray-300 hover:text-white transition-colors">
+              /* -- Nav links (public) -- */
+              <nav className="hidden md:flex items-center space-x-6">
+                <a
+                  href="#features"
+                  className="text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Features
                 </a>
-                <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">
-                  Pricing
+                <a
+                  href="#templates"
+                  className="text-sm text-slate-400 hover:text-white transition-colors"
+                >
+                  Templates
                 </a>
               </nav>
             )}
 
-            <div className="flex items-center space-x-4">
+            {/* -- Right side actions -- */}
+            <div className="flex items-center space-x-3">
               {isAuthenticated ? (
                 <div className="relative">
+                  {/* User avatar button */}
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                    className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
                   >
                     {user?.avatar ? (
                       <img
                         src={user.avatar}
                         alt={user.name}
-                        className="w-8 h-8 rounded-full"
+                        className="w-7 h-7 rounded-full"
                       />
                     ) : (
-                      <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-gray-300" />
+                      <div className="w-7 h-7 bg-slate-700 rounded-full flex items-center justify-center">
+                        <User className="w-3.5 h-3.5 text-slate-300" />
                       </div>
                     )}
-                    <span className="hidden sm:block text-gray-300">{user?.name}</span>
+                    <span className="hidden sm:block text-sm text-slate-300">
+                      {user?.name}
+                    </span>
                   </button>
 
+                  {/* Dropdown menu */}
                   {showUserMenu && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg py-1"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute right-0 mt-2 w-44 bg-surface-900 border border-slate-700/60 rounded-lg shadow-xl py-1"
                     >
-                      <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                        <User className="w-4 h-4" />
-                        <span>Profile</span>
-                      </button>
-                      <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                        <Settings className="w-4 h-4" />
-                        <span>Settings</span>
-                      </button>
-                      <hr className="border-gray-700 my-1" />
+                      <MenuButton icon={<User className="w-4 h-4" />}>
+                        Profile
+                      </MenuButton>
+                      <MenuButton icon={<Settings className="w-4 h-4" />}>
+                        Settings
+                      </MenuButton>
+                      <hr className="border-slate-700/60 my-1" />
                       <button
                         onClick={logout}
-                        className="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-700 flex items-center space-x-2"
+                        className="w-full px-4 py-2 text-left text-red-400 hover:bg-slate-800 flex items-center space-x-2 text-sm"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign out</span>
@@ -146,13 +128,14 @@ export function Header() {
                 </div>
               ) : (
                 <>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setShowAuthModal(true)}
                   >
                     Sign in
                   </Button>
-                  <Button onClick={() => setShowAuthModal(true)}>
+                  <Button size="sm" onClick={() => setShowAuthModal(true)}>
                     Get started
                   </Button>
                 </>
@@ -167,5 +150,54 @@ export function Header() {
         onClose={() => setShowAuthModal(false)}
       />
     </>
+  );
+}
+
+/* -- Helper: Navigation link with active indicator -- */
+function NavLink({
+  to,
+  current,
+  children,
+}: {
+  to: string;
+  current: string;
+  children: React.ReactNode;
+}) {
+  const isActive = current === to;
+
+  return (
+    <Link
+      to={to}
+      className={`flex items-center text-sm transition-colors relative ${
+        isActive
+          ? 'text-teal-400 font-medium'
+          : 'text-slate-400 hover:text-slate-200'
+      }`}
+    >
+      {children}
+      {/* -- Active underline indicator -- */}
+      {isActive && (
+        <motion.span
+          layoutId="nav-indicator"
+          className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-teal-500 rounded-full"
+        />
+      )}
+    </Link>
+  );
+}
+
+/* -- Helper: Menu dropdown button -- */
+function MenuButton({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <button className="w-full px-4 py-2 text-left text-slate-300 hover:bg-slate-800 flex items-center space-x-2 text-sm">
+      {icon}
+      <span>{children}</span>
+    </button>
   );
 }

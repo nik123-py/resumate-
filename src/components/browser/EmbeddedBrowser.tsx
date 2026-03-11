@@ -10,7 +10,7 @@
  * spine-hangar application workspace
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ExternalLink,
@@ -49,7 +49,7 @@ function timeAgo(ts: number): string {
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   in_progress: { bg: 'bg-amber-900/30', text: 'text-amber-400' },
   submitted: { bg: 'bg-green-900/30', text: 'text-green-400' },
-  abandoned: { bg: 'bg-gray-800', text: 'text-gray-500' },
+  abandoned: { bg: 'bg-surface-800', text: 'text-slate-500' },
 };
 
 // -- Workspace Overlay (copy resume fields) --
@@ -91,16 +91,16 @@ function WorkspaceOverlay({ onClose }: { onClose: () => void }) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="w-72 bg-gray-800/95 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 shadow-2xl max-h-[70vh] overflow-y-auto"
+      className="w-72 bg-surface-800/95 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 shadow-2xl max-h-[70vh] overflow-y-auto"
     >
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-sm font-semibold text-white">Quick Copy</h4>
-        <button onClick={onClose} className="text-gray-400 hover:text-white text-xs">
+        <h4 className="text-sm font-semibold text-slate-100">Quick Copy</h4>
+        <button onClick={onClose} className="text-slate-400 hover:text-slate-100 text-xs">
           Close
         </button>
       </div>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="text-xs text-slate-500 mb-3">
         Click to copy any field, then paste into the application form.
       </p>
 
@@ -109,19 +109,19 @@ function WorkspaceOverlay({ onClose }: { onClose: () => void }) {
           <button
             key={field.id}
             onClick={() => copyToClipboard(field.value, field.id)}
-            className="w-full text-left p-2 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors group"
+            className="w-full text-left p-2 rounded-lg bg-surface-700/50 hover:bg-surface-700 transition-colors group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gray-500 uppercase tracking-wider">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider">
                 {field.label}
               </span>
               {copiedField === field.id ? (
                 <Check className="w-3 h-3 text-green-400" />
               ) : (
-                <Copy className="w-3 h-3 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Copy className="w-3 h-3 text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               )}
             </div>
-            <p className="text-xs text-gray-300 mt-1 truncate">{field.value}</p>
+            <p className="text-xs text-slate-300 mt-1 truncate">{field.value}</p>
           </button>
         ))}
       </div>
@@ -143,8 +143,8 @@ function AddApplicationForm({ onAdd, onCancel }: AddFormProps) {
   const [notes, setNotes] = useState('');
 
   return (
-    <Card className="p-4 space-y-3 border-purple-500/30">
-      <h4 className="text-sm font-semibold text-white">Track New Application</h4>
+    <Card className="p-4 space-y-3 border-accent-500/30">
+      <h4 className="text-sm font-semibold text-slate-100">Track New Application</h4>
       <Input
         label="Job Title"
         value={jobTitle}
@@ -164,12 +164,12 @@ function AddApplicationForm({ onAdd, onCancel }: AddFormProps) {
         placeholder="https://careers.acme.com/apply"
       />
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+        <label className="block text-sm font-medium text-slate-300 mb-2">Notes</label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Any notes about this application..."
-          className="w-full h-16 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
+          className="w-full h-16 px-3 py-2 bg-surface-800 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 resize-none text-sm"
         />
       </div>
       <div className="flex gap-2">
@@ -233,17 +233,17 @@ export function EmbeddedBrowser() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4">
+    <div className="min-h-screen bg-surface-950 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <Briefcase className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center">
+              <Briefcase className="w-5 h-5 text-slate-100" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Application Tracker</h1>
-              <p className="text-sm text-gray-400">
+              <h1 className="text-2xl font-bold text-slate-100">Application Tracker</h1>
+              <p className="text-sm text-slate-400">
                 {applications.length} application{applications.length !== 1 ? 's' : ''} tracked
               </p>
             </div>
@@ -302,9 +302,9 @@ export function EmbeddedBrowser() {
             {/* Applications */}
             {applications.length === 0 && !showAddForm ? (
               <Card className="text-center py-10">
-                <Briefcase className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400 mb-2">No applications tracked yet</p>
-                <p className="text-xs text-gray-500 mb-4">
+                <Briefcase className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-400 mb-2">No applications tracked yet</p>
+                <p className="text-xs text-slate-500 mb-4">
                   Start tracking your job applications to stay organized
                 </p>
                 <Button onClick={() => setShowAddForm(true)} size="sm">
@@ -322,8 +322,8 @@ export function EmbeddedBrowser() {
                   <motion.div
                     key={app.id}
                     layout
-                    className={`bg-gray-800/50 border rounded-xl overflow-hidden ${
-                      isPending ? 'border-amber-500/30' : 'border-gray-700/50'
+                    className={`bg-surface-800/50 border rounded-xl overflow-hidden ${
+                      isPending ? 'border-amber-500/30' : 'border-slate-700/50'
                     }`}
                   >
                     {/* Card header */}
@@ -334,12 +334,12 @@ export function EmbeddedBrowser() {
                       {/* Status dot */}
                       <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
                         app.status === 'in_progress' ? 'bg-amber-400' :
-                        app.status === 'submitted' ? 'bg-green-400' : 'bg-gray-500'
+                        app.status === 'submitted' ? 'bg-green-400' : 'bg-slate-500'
                       }`} />
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-white truncate">
+                          <span className="text-sm font-medium text-slate-100 truncate">
                             {app.jobTitle}
                           </span>
                           <span className={`text-xs px-2 py-0.5 rounded-full ${statusColor.bg} ${statusColor.text}`}>
@@ -349,15 +349,15 @@ export function EmbeddedBrowser() {
                             <Bell className="w-3 h-3 text-amber-400" />
                           )}
                         </div>
-                        <p className="text-xs text-gray-400 truncate">
+                        <p className="text-xs text-slate-400 truncate">
                           {app.company} -- {timeAgo(app.lastEditedAt)}
                         </p>
                       </div>
 
                       {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-gray-500" />
+                        <ChevronUp className="w-4 h-4 text-slate-500" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-gray-500" />
+                        <ChevronDown className="w-4 h-4 text-slate-500" />
                       )}
                     </div>
 
@@ -368,17 +368,17 @@ export function EmbeddedBrowser() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="border-t border-gray-700/50"
+                          className="border-t border-slate-700/50"
                         >
                           <div className="p-4 space-y-3">
                             {app.notes && (
-                              <p className="text-xs text-gray-400">{app.notes}</p>
+                              <p className="text-xs text-slate-400">{app.notes}</p>
                             )}
 
                             {app.sourceUrl && (
                               <button
                                 onClick={() => handleOpenUrl(app.sourceUrl)}
-                                className="flex items-center gap-1.5 text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                                className="flex items-center gap-1.5 text-xs text-accent-400 hover:text-accent-300 transition-colors"
                               >
                                 <ExternalLink className="w-3 h-3" />
                                 Open application page
@@ -414,7 +414,7 @@ export function EmbeddedBrowser() {
                               </Button>
                             </div>
 
-                            <div className="text-[10px] text-gray-600 pt-1">
+                            <div className="text-[10px] text-slate-600 pt-1">
                               <Clock className="w-3 h-3 inline mr-1" />
                               Created {new Date(app.createdAt).toLocaleDateString()}
                             </div>

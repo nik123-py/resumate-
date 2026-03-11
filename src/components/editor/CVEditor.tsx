@@ -7,7 +7,7 @@
  * -----------------------------------------------
  */
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -213,9 +213,9 @@ export function CVEditor() {
   // No CV selected state
   if (!currentCV) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-400 mb-4">No CV selected</p>
+          <p className="text-slate-400 mb-4">No CV selected</p>
           <Button onClick={() => navigate('/dashboard')}>
             Back to Dashboard
           </Button>
@@ -225,9 +225,9 @@ export function CVEditor() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-950">
       {/* -- Editor Header Bar -- */}
-      <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-lg border-b border-gray-700">
+      <div className="sticky top-0 z-40 bg-surface-950/95 backdrop-blur-md border-b border-slate-800">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -242,9 +242,9 @@ export function CVEditor() {
                 type="text"
                 value={currentCV.title}
                 onChange={(e) => updateCV({ ...currentCV, title: e.target.value })}
-                className="text-xl font-semibold bg-transparent text-gray-100 border-none outline-none focus:bg-gray-800 px-2 py-1 rounded"
+                className="text-lg font-semibold bg-transparent text-slate-100 border-none outline-none focus:bg-surface-800 px-2 py-1 rounded"
               />
-              <p className="text-sm text-gray-400">
+              <p className="text-xs text-slate-500 ml-2">
                 Last saved: {new Date(currentCV.updatedAt).toLocaleTimeString()}
               </p>
             </div>
@@ -309,7 +309,7 @@ export function CVEditor() {
 
         {/* Preview Panel */}
         {showPreview && (
-          <div className="w-1/2 p-6 border-l border-gray-700 bg-gray-800/20 overflow-y-auto">
+          <div className="w-1/2 p-6 border-l border-slate-800 bg-surface-900/30 overflow-y-auto">
             <div className="sticky top-0">
               <CVPreview cv={currentCV} className="transform scale-75 origin-top" />
             </div>

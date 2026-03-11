@@ -1,3 +1,11 @@
+/**
+ * Input.tsx
+ * -----------------------------------------------
+ * Reusable input component. Teal focus ring,
+ * warm dark background, clean borders.
+ * -----------------------------------------------
+ */
+
 import React, { forwardRef } from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -10,18 +18,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-slate-300 mb-1.5">
             {label}
           </label>
         )}
         <input
           ref={ref}
-          className={`w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 ${error ? 'border-red-500' : ''} ${className}`}
+          className={`w-full px-3 py-2 bg-surface-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-600 transition-colors duration-150 ${
+            error ? 'border-red-500' : ''
+          } ${className}`}
           {...props}
         />
-        {error && (
-          <p className="mt-1 text-sm text-red-400">{error}</p>
-        )}
+        {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
       </div>
     );
   }

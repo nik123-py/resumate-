@@ -12,7 +12,7 @@ class AIService {
     // Try to get API key from localStorage or environment
     this.apiKey = localStorage.getItem('gemini_api_key') || 
                   import.meta.env.VITE_GEMINI_API_KEY || 
-                  'AIzaSyDs2KUHknPkdOoqVCGZWQfLcieAgwuTcDM';
+                  'AIzaSyAsW-sXWklyWeSFNCTjsCxCB6J2c5h4Yu8';
   }
 
   setApiKey(apiKey: string) {
@@ -35,7 +35,7 @@ class AIService {
 
     try {
       const response = await fetch(
-        `${this.baseUrl}/models/gemini-2.0-flash-exp:generateContent`,
+        `${this.baseUrl}/models/gemini-2.5-flash:generateContent`,
         {
           method: 'POST',
           headers: {

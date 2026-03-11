@@ -41,7 +41,8 @@ function AppRoutes() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-900">
+      {/* -- Warm dark background applied globally -- */}
+      <div className="min-h-screen bg-surface-950">
         {/* Invisible route change tracker */}
         <RouteTracker />
 

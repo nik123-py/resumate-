@@ -1,3 +1,11 @@
+/**
+ * SkillsSection.tsx
+ * -----------------------------------------------
+ * Skills tag editor. Teal-tinted tags instead
+ * of purple. Clean chip-style layout.
+ * -----------------------------------------------
+ */
+
 import React, { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from '../../ui/Button';
@@ -37,16 +45,17 @@ export function SkillsSection({ data, onUpdate }: SkillsSectionProps) {
 
   return (
     <div className="p-4 space-y-4">
+      {/* -- Skill tags -- */}
       <div className="flex flex-wrap gap-2">
         {data.items?.map((skill, index) => (
           <div
             key={index}
-            className="inline-flex items-center space-x-2 bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm"
+            className="inline-flex items-center space-x-1.5 bg-teal-600/15 text-teal-300 px-3 py-1 rounded-full text-sm"
           >
             <span>{skill}</span>
             <button
               onClick={() => removeSkill(index)}
-              className="text-purple-400 hover:text-purple-300"
+              className="text-teal-400 hover:text-teal-200"
             >
               <X className="w-3 h-3" />
             </button>
@@ -54,6 +63,7 @@ export function SkillsSection({ data, onUpdate }: SkillsSectionProps) {
         ))}
       </div>
 
+      {/* -- Add skill input -- */}
       <div className="flex space-x-2">
         <Input
           value={newSkill}
@@ -67,9 +77,9 @@ export function SkillsSection({ data, onUpdate }: SkillsSectionProps) {
         </Button>
       </div>
 
-      <div className="text-sm text-gray-400">
-        <p>Add technical skills, soft skills, languages, or any other relevant abilities.</p>
-      </div>
+      <p className="text-xs text-slate-500">
+        Add technical skills, soft skills, languages, or any other relevant abilities.
+      </p>
     </div>
   );
 }

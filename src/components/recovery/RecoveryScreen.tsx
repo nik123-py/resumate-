@@ -8,7 +8,7 @@
  * spine-hangar recovery experience
  */
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
 import { useSession } from '../../contexts/SessionContext';
@@ -81,7 +81,6 @@ interface ProgressRingProps {
 function ProgressRing({ progress, sectionMap, size = 180 }: ProgressRingProps) {
   const center = size / 2;
   const radius = size / 2 - 16;
-  const circumference = 2 * Math.PI * radius;
 
   // Build arcs per section based on weights
   const sections = Object.entries(SECTION_WEIGHTS);
@@ -130,7 +129,7 @@ function ProgressRing({ progress, sectionMap, size = 180 }: ProgressRingProps) {
         cy={center}
         r={radius}
         fill="none"
-        stroke="#1f2937"
+        stroke="#172033"
         strokeWidth="10"
       />
       {/* Section arcs */}
@@ -165,7 +164,7 @@ function StatusBadge({ status }: { status: 'complete' | 'in_progress' | 'not_sta
   const config = {
     complete: { label: 'Complete', bg: 'bg-green-900/30', text: 'text-green-400', border: 'border-green-500/30' },
     in_progress: { label: 'In Progress', bg: 'bg-amber-900/30', text: 'text-amber-400', border: 'border-amber-500/30' },
-    not_started: { label: 'Not Started', bg: 'bg-gray-800', text: 'text-gray-500', border: 'border-gray-600/30' },
+    not_started: { label: 'Not Started', bg: 'bg-surface-800', text: 'text-slate-500', border: 'border-slate-600/30' },
   };
 
   const c = config[status];
@@ -237,7 +236,7 @@ export function RecoveryScreen() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 30 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl overflow-hidden"
+          className="w-full max-w-lg bg-surface-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden"
         >
           {/* -- Header -- */}
           <div className="p-6 pb-2">
@@ -245,8 +244,8 @@ export function RecoveryScreen() {
               Welcome back{user?.name ? `, ${user.name}` : ''}
             </h2>
             <div className="flex items-center gap-2 mt-1">
-              <Clock className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-400">
+              <Clock className="w-4 h-4 text-slate-400" />
+              <p className="text-sm text-slate-400">
                 You were away for {formatDuration(timeSinceLastActive)}
               </p>
             </div>
@@ -279,12 +278,12 @@ export function RecoveryScreen() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-gray-200 truncate">{label}</span>
+                      <span className="text-sm text-slate-200 truncate">{label}</span>
                       <StatusBadge status={status} />
                     </div>
 
                     {/* Progress bar */}
-                    <div className="mt-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="mt-1 h-1.5 bg-surface-800 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${completion}%` }}
@@ -296,7 +295,7 @@ export function RecoveryScreen() {
 
                     {/* Last editing context */}
                     {isActive && lastFieldContext && status === 'in_progress' && (
-                      <p className="text-xs text-gray-500 italic mt-1">
+                      <p className="text-xs text-slate-500 italic mt-1">
                         Last editing: {lastFieldContext}
                       </p>
                     )}
@@ -307,9 +306,9 @@ export function RecoveryScreen() {
           </div>
 
           {/* -- AI Nudge -- */}
-          <div className="mx-6 mt-4 p-3 bg-purple-900/20 border border-purple-500/20 rounded-lg flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-purple-300">{nudge}</p>
+          <div className="mx-6 mt-4 p-3 bg-accent-900/20 border border-accent-500/20 rounded-lg flex items-start gap-2">
+            <Sparkles className="w-4 h-4 text-accent-400 mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-accent-300">{nudge}</p>
           </div>
 
           {/* -- Action Buttons -- */}

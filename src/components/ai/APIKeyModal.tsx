@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Key, Eye, EyeOff, Check, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -31,7 +31,7 @@ export function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
     try {
       // Test the API key by making a simple request
       const testResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`,
         {
           method: 'POST',
           headers: {
@@ -92,18 +92,18 @@ export function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
       >
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-accent-500 to-accent-600 rounded-lg flex items-center justify-center">
               <Key className="w-5 h-5 text-white" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Google Gemini API Key</h2>
-              <p className="text-sm text-gray-400">Configure your API key to use AI features</p>
+              <p className="text-sm text-slate-400">Configure your API key to use AI features</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
                 API Key
               </label>
               <div className="relative">
@@ -117,7 +117,7 @@ export function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
                 <button
                   type="button"
                   onClick={() => setShowKey(!showKey)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
                 >
                   {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -146,10 +146,10 @@ export function APIKeyModal({ isOpen, onClose }: APIKeyModalProps) {
               </motion.div>
             )}
 
-            <div className="bg-gray-800/50 rounded-lg p-4">
+            <div className="bg-surface-800/50 rounded-lg p-4">
               <h3 className="text-sm font-medium text-white mb-2">How to get your API key:</h3>
-              <ol className="text-xs text-gray-400 space-y-1 list-decimal list-inside">
-                <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300">Google AI Studio</a></li>
+              <ol className="text-xs text-slate-400 space-y-1 list-decimal list-inside">
+                <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-accent-400 hover:text-accent-300">Google AI Studio</a></li>
                 <li>Sign in to your Google account</li>
                 <li>Click "Get API key" or "Create API key"</li>
                 <li>Copy the generated key and paste it here</li>

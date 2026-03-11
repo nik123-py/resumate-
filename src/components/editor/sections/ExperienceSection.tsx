@@ -1,5 +1,13 @@
-import React, { useState } from 'react';
-import { Plus, Trash2, Calendar } from 'lucide-react';
+/**
+ * ExperienceSection.tsx
+ * -----------------------------------------------
+ * Work experience entries. Teal focus rings,
+ * warm surface colors.
+ * -----------------------------------------------
+ */
+
+import { useState } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { Input } from '../../ui/Input';
 import type { ExperienceItem } from '../../../types';
@@ -35,7 +43,7 @@ export function ExperienceSection({ data, onUpdate }: ExperienceSectionProps) {
   };
 
   const updateExperience = (index: number, updates: Partial<ExperienceItem>) => {
-    const updatedItems = data.items.map((item, i) => 
+    const updatedItems = data.items.map((item, i) =>
       i === index ? { ...item, ...updates } : item
     );
     onUpdate({ items: updatedItems });
@@ -61,16 +69,16 @@ export function ExperienceSection({ data, onUpdate }: ExperienceSectionProps) {
   return (
     <div className="p-4 space-y-4">
       {data.items?.map((item, index) => (
-        <div key={item.id} className="border border-gray-600 rounded-lg p-4 space-y-4">
+        <div key={item.id} className="border border-slate-700/60 rounded-lg p-4 space-y-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => toggleExpanded(item.id)}
               className="text-left flex-1"
             >
-              <div className="font-medium text-gray-100">
+              <div className="font-medium text-slate-100 text-sm">
                 {item.position || 'New Position'} {item.company && `at ${item.company}`}
               </div>
-              <div className="text-sm text-gray-400">
+              <div className="text-xs text-slate-500">
                 {item.startDate && (
                   <>
                     {item.startDate} - {item.current ? 'Present' : item.endDate || 'Present'}
@@ -89,7 +97,7 @@ export function ExperienceSection({ data, onUpdate }: ExperienceSectionProps) {
           </div>
 
           {expandedItems.has(item.id) && (
-            <div className="space-y-4 pt-4 border-t border-gray-600">
+            <div className="space-y-4 pt-4 border-t border-slate-700/40">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Job Title"
@@ -115,14 +123,14 @@ export function ExperienceSection({ data, onUpdate }: ExperienceSectionProps) {
                     id={`current-${item.id}`}
                     checked={item.current}
                     onChange={(e) => updateExperience(index, { current: e.target.checked, endDate: e.target.checked ? '' : item.endDate })}
-                    className="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
+                    className="w-4 h-4 text-teal-600 bg-surface-800 border-slate-600 rounded focus:ring-teal-500"
                   />
-                  <label htmlFor={`current-${item.id}`} className="text-sm text-gray-300">
+                  <label htmlFor={`current-${item.id}`} className="text-sm text-slate-300">
                     I currently work here
                   </label>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Start Date"
@@ -141,14 +149,14 @@ export function ExperienceSection({ data, onUpdate }: ExperienceSectionProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">
                   Job Description
                 </label>
                 <textarea
                   value={item.description}
                   onChange={(e) => updateExperience(index, { description: e.target.value })}
                   placeholder="Describe your responsibilities, achievements, and key contributions..."
-                  className="w-full h-24 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
+                  className="w-full h-24 px-3 py-2 bg-surface-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-600 transition-colors resize-none text-sm"
                 />
               </div>
             </div>

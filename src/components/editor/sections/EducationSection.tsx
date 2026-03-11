@@ -1,4 +1,12 @@
-import React, { useState } from 'react';
+/**
+ * EducationSection.tsx
+ * -----------------------------------------------
+ * Education entries. Teal focus rings,
+ * warm surface colors.
+ * -----------------------------------------------
+ */
+
+import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { Input } from '../../ui/Input';
@@ -36,7 +44,7 @@ export function EducationSection({ data, onUpdate }: EducationSectionProps) {
   };
 
   const updateEducation = (index: number, updates: Partial<EducationItem>) => {
-    const updatedItems = data.items.map((item, i) => 
+    const updatedItems = data.items.map((item, i) =>
       i === index ? { ...item, ...updates } : item
     );
     onUpdate({ items: updatedItems });
@@ -62,17 +70,17 @@ export function EducationSection({ data, onUpdate }: EducationSectionProps) {
   return (
     <div className="p-4 space-y-4">
       {data.items?.map((item, index) => (
-        <div key={item.id} className="border border-gray-600 rounded-lg p-4 space-y-4">
+        <div key={item.id} className="border border-slate-700/60 rounded-lg p-4 space-y-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => toggleExpanded(item.id)}
               className="text-left flex-1"
             >
-              <div className="font-medium text-gray-100">
+              <div className="font-medium text-slate-100 text-sm">
                 {item.degree || 'New Degree'} {item.field && `in ${item.field}`}
               </div>
-              <div className="text-sm text-gray-400">
-                {item.institution} {item.startDate && `• ${item.startDate} - ${item.endDate}`}
+              <div className="text-xs text-slate-500">
+                {item.institution} {item.startDate && `-- ${item.startDate} - ${item.endDate}`}
               </div>
             </button>
             <Button
@@ -86,7 +94,7 @@ export function EducationSection({ data, onUpdate }: EducationSectionProps) {
           </div>
 
           {expandedItems.has(item.id) && (
-            <div className="space-y-4 pt-4 border-t border-gray-600">
+            <div className="space-y-4 pt-4 border-t border-slate-700/40">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Degree"
@@ -113,7 +121,7 @@ export function EducationSection({ data, onUpdate }: EducationSectionProps) {
                   placeholder="Boston, MA"
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                   label="Start Date"
@@ -136,14 +144,14 @@ export function EducationSection({ data, onUpdate }: EducationSectionProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">
                   Additional Details
                 </label>
                 <textarea
                   value={item.description}
                   onChange={(e) => updateEducation(index, { description: e.target.value })}
                   placeholder="Relevant coursework, honors, activities, or achievements..."
-                  className="w-full h-20 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
+                  className="w-full h-20 px-3 py-2 bg-surface-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-600 transition-colors resize-none text-sm"
                 />
               </div>
             </div>

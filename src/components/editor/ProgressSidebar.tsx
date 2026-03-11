@@ -3,24 +3,31 @@
  * -----------------------------------------------
  * Collapsible sidebar on the left side of the
  * CV editor. Shows overall progress, per-section
- * status, and session timeline.
+ * status, AI improvement suggestions with
+ * selection probability, and session timeline.
  * -----------------------------------------------
- * spine-hangar editor progress tracking
  */
 
-import React, { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
   Clock,
+  ChevronDown,
+  Loader2,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle2,
+  Lightbulb,
+  X,
 } from 'lucide-react';
 import { useSession } from '../../contexts/SessionContext';
+import { useCV } from '../../contexts/CVContext';
+import { aiService } from '../../services/aiService';
 import {
-  getCompletionStatus,
   getCompletionColor,
-  SECTION_WEIGHTS,
 } from '../../utils/completionCalculator';
 
 // -- Section display labels --
@@ -31,6 +38,43 @@ const SECTION_LABELS: Record<string, string> = {
   education: 'Education',
   skills: 'Skills',
 };
+
+// -- Section improvement tips (fallback when AI is unavailable) --
+const SECTION_TIPS: Record<string, string[]> = {
+  contact: [
+    'Add a professional email address',
+    'Include your LinkedIn profile URL',
+    'Add your location (city, state)',
+  ],
+  summary: [
+    'Write 2-3 sentences highlighting your key strengths',
+    'Include years of experience and main expertise',
+    'Mention your career goals aligned with the role',
+  ],
+  experience: [
+    'Use action verbs to start each bullet point',
+    'Quantify achievements with numbers and metrics',
+    'Include relevant keywords from job descriptions',
+  ],
+  education: [
+    'List your highest degree first',
+    'Include relevant coursework or projects',
+    'Add GPA if it\'s above 3.5',
+  ],
+  skills: [
+    'Group skills by category (Technical, Soft, Tools)',
+    'Prioritize skills mentioned in job descriptions',
+    'Include proficiency levels for languages',
+  ],
+};
+
+interface SectionAnalysis {
+  sectionType: string;
+  selectionProbability: number;
+  improvements: string[];
+  strengths: string[];
+  priority: 'high' | 'medium' | 'low';
+}
 
 // -- Mini circular progress for collapsed state --
 function MiniProgress({ progress, size = 36 }: { progress: number; size?: number }) {
@@ -46,7 +90,7 @@ function MiniProgress({ progress, size = 36 }: { progress: number; size?: number
         cy={center}
         r={radius}
         fill="none"
-        stroke="#1f2937"
+        stroke="#172033"
         strokeWidth="3"
       />
       <circle
@@ -54,7 +98,7 @@ function MiniProgress({ progress, size = 36 }: { progress: number; size?: number
         cy={center}
         r={radius}
         fill="none"
-        stroke="#7c3aed"
+        stroke="#14b8a6"
         strokeWidth="3"
         strokeLinecap="round"
         strokeDasharray={circumference}
@@ -99,11 +143,59 @@ function formatAction(action: string, meta?: Record<string, unknown>): string {
   return labels[action] || action.replace(/_/g, ' ');
 }
 
+// -- Priority badge component --
+function PriorityBadge({ priority }: { priority: 'high' | 'medium' | 'low' }) {
+  const colors = {
+    high: 'bg-red-500/20 text-red-400 border-red-500/30',
+    medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    low: 'bg-green-500/20 text-green-400 border-green-500/30',
+  };
+  
+  return (
+    <span className={`text-[9px] px-1.5 py-0.5 rounded border ${colors[priority]} uppercase font-semibold`}>
+      {priority}
+    </span>
+  );
+}
+
+// -- Selection probability meter --
+function SelectionMeter({ probability }: { probability: number }) {
+  const getColor = () => {
+    if (probability >= 70) return '#22c55e'; // green
+    if (probability >= 40) return '#eab308'; // yellow
+    return '#ef4444'; // red
+  };
+  
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex-1 h-1.5 bg-surface-800 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${probability}%` }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="h-full rounded-full"
+          style={{ backgroundColor: getColor() }}
+        />
+      </div>
+      <span className="text-[10px] font-semibold" style={{ color: getColor() }}>
+        {probability}%
+      </span>
+    </div>
+  );
+}
+
 // -- Main Component --
 
 export function ProgressSidebar() {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResults, setAnalysisResults] = useState<SectionAnalysis[]>([]);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  
   const { overallProgress, sectionCompletionMap, sessionData } = useSession();
+  const { currentCV } = useCV();
 
   // Last 5 action log entries
   const recentActions = (sessionData?.actionLog ?? [])
@@ -112,25 +204,133 @@ export function ProgressSidebar() {
     .reverse();
 
   // Count sections where AI could help (< 80% complete)
-  const aiSuggestionsCount = Object.values(sectionCompletionMap).filter(v => v < 80).length;
+  const sectionsToImprove = Object.entries(sectionCompletionMap)
+    .filter(([, v]) => v < 80)
+    .map(([k]) => k);
+  const aiSuggestionsCount = sectionsToImprove.length;
+
+  // Analyze CV with AI
+  const analyzeCV = useCallback(async () => {
+    if (!currentCV || !aiService.hasApiKey()) {
+      // Use fallback analysis
+      const fallbackResults: SectionAnalysis[] = sectionsToImprove.map(sectionType => {
+        const completion = sectionCompletionMap[sectionType] ?? 0;
+        return {
+          sectionType,
+          selectionProbability: Math.min(95, completion + 15),
+          improvements: SECTION_TIPS[sectionType] || ['Add more details to this section'],
+          strengths: completion > 50 ? ['Good start on this section'] : [],
+          priority: completion < 30 ? 'high' : completion < 60 ? 'medium' : 'low',
+        };
+      });
+      setAnalysisResults(fallbackResults);
+      setShowAnalysis(true);
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+
+    try {
+      const prompt = `Analyze this resume and provide specific improvement suggestions for each section. For each section that needs improvement, provide:
+1. A selection probability percentage (0-100) - how likely this resume section would pass ATS and impress recruiters
+2. 2-3 specific, actionable improvements
+3. Any strengths to highlight
+4. Priority level (high/medium/low)
+
+Focus on sections: ${sectionsToImprove.join(', ')}
+
+Respond in this exact JSON format (no markdown, just pure JSON):
+{
+  "sections": [
+    {
+      "sectionType": "summary",
+      "selectionProbability": 45,
+      "improvements": ["Add quantifiable achievements", "Include industry keywords"],
+      "strengths": ["Clear career objective"],
+      "priority": "high"
+    }
+  ]
+}`;
+
+      const response = await aiService.generateResponse(prompt, currentCV);
+      
+      // Parse the JSON response
+      try {
+        // Extract JSON from the response (handle potential markdown wrapping)
+        let jsonStr = response;
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonStr = jsonMatch[0];
+        }
+        
+        const parsed = JSON.parse(jsonStr);
+        if (parsed.sections && Array.isArray(parsed.sections)) {
+          setAnalysisResults(parsed.sections);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', parseError);
+        // Fallback to basic analysis
+        const fallbackResults: SectionAnalysis[] = sectionsToImprove.map(sectionType => {
+          const completion = sectionCompletionMap[sectionType] ?? 0;
+          return {
+            sectionType,
+            selectionProbability: Math.min(95, completion + 15),
+            improvements: SECTION_TIPS[sectionType] || ['Add more details to this section'],
+            strengths: completion > 50 ? ['Good start on this section'] : [],
+            priority: completion < 30 ? 'high' : completion < 60 ? 'medium' : 'low',
+          };
+        });
+        setAnalysisResults(fallbackResults);
+      }
+      
+      setShowAnalysis(true);
+    } catch (error: any) {
+      console.error('Analysis error:', error);
+      setAnalysisError(error.message || 'Failed to analyze resume');
+      // Still show fallback
+      const fallbackResults: SectionAnalysis[] = sectionsToImprove.map(sectionType => {
+        const completion = sectionCompletionMap[sectionType] ?? 0;
+        return {
+          sectionType,
+          selectionProbability: Math.min(95, completion + 15),
+          improvements: SECTION_TIPS[sectionType] || ['Add more details to this section'],
+          strengths: completion > 50 ? ['Good start on this section'] : [],
+          priority: completion < 30 ? 'high' : completion < 60 ? 'medium' : 'low',
+        };
+      });
+      setAnalysisResults(fallbackResults);
+      setShowAnalysis(true);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [currentCV, sectionsToImprove, sectionCompletionMap]);
+
+  // Scroll to section
+  const scrollToSection = (sectionType: string) => {
+    const el = document.querySelector(`[data-section-id="${sectionType}"]`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   return (
     <motion.div
       initial={false}
-      animate={{ width: isExpanded ? 240 : 56 }}
+      animate={{ width: isExpanded ? 280 : 56 }}
       transition={{ duration: 0.25 }}
-      className="h-full bg-gray-800/60 border-r border-gray-700/50 flex flex-col overflow-hidden flex-shrink-0"
+      className="h-full bg-surface-900/60 border-r border-slate-800 flex flex-col overflow-hidden flex-shrink-0"
     >
       {/* -- Toggle Button -- */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-700/50">
+      <div className="flex items-center justify-between p-3 border-b border-slate-800">
         {isExpanded && (
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Progress
           </span>
         )}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 text-gray-400 hover:text-white rounded transition-colors"
+          className="p-1 text-slate-500 hover:text-white rounded transition-colors"
           title={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           {isExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -149,16 +349,27 @@ export function ProgressSidebar() {
             return (
               <button
                 key={key}
-                onClick={() => {
-                  const el = document.querySelector(`[data-section-id="${key}"]`);
-                  el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }}
-                className="w-3 h-3 rounded-full hover:ring-2 ring-purple-400 transition-all"
+                onClick={() => scrollToSection(key)}
+                className="w-3 h-3 rounded-full hover:ring-2 ring-teal-400 transition-all"
                 style={{ backgroundColor: color }}
                 title={`${SECTION_LABELS[key]} - ${completion}%`}
               />
             );
           })}
+          
+          {/* AI badge when collapsed */}
+          {aiSuggestionsCount > 0 && (
+            <button
+              onClick={() => {
+                setIsExpanded(true);
+                analyzeCV();
+              }}
+              className="w-8 h-8 bg-teal-500/20 rounded-full flex items-center justify-center hover:bg-teal-500/30 transition-colors"
+              title={`${aiSuggestionsCount} sections can be improved`}
+            >
+              <Sparkles className="w-4 h-4 text-teal-400" />
+            </button>
+          )}
         </div>
       )}
 
@@ -181,16 +392,12 @@ export function ProgressSidebar() {
               {Object.entries(SECTION_LABELS).map(([key, label]) => {
                 const completion = sectionCompletionMap[key] ?? 0;
                 const color = getCompletionColor(completion);
-                const status = getCompletionStatus(completion);
 
                 return (
                   <button
                     key={key}
-                    onClick={() => {
-                      const el = document.querySelector(`[data-section-id="${key}"]`);
-                      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }}
-                    className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700/50 transition-colors text-left group"
+                    onClick={() => scrollToSection(key)}
+                    className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-surface-800/50 transition-colors text-left group"
                   >
                     {/* Dot */}
                     <div
@@ -200,13 +407,13 @@ export function ProgressSidebar() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-300 group-hover:text-white truncate">
+                        <span className="text-xs text-slate-400 group-hover:text-white truncate">
                           {label}
                         </span>
-                        <span className="text-[10px] text-gray-500">{completion}%</span>
+                        <span className="text-[10px] text-slate-600">{completion}%</span>
                       </div>
                       {/* Mini bar */}
-                      <div className="mt-1 h-1 bg-gray-700 rounded-full overflow-hidden">
+                      <div className="mt-1 h-1 bg-surface-800 rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{ width: `${completion}%`, backgroundColor: color }}
@@ -218,33 +425,187 @@ export function ProgressSidebar() {
               })}
             </div>
 
-            {/* AI suggestions badge */}
+            {/* AI suggestions badge - Interactive */}
             {aiSuggestionsCount > 0 && (
-              <div className="mx-3 mt-4 p-2 bg-purple-900/20 border border-purple-500/20 rounded-lg flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[11px] text-purple-300">
-                  {aiSuggestionsCount} section{aiSuggestionsCount > 1 ? 's' : ''} can be improved
-                </span>
+              <div className="mx-3 mt-4">
+                <button
+                  onClick={analyzeCV}
+                  disabled={isAnalyzing}
+                  className="w-full p-3 bg-gradient-to-r from-teal-900/30 to-teal-800/20 border border-teal-600/30 rounded-lg hover:border-teal-500/50 transition-all group"
+                >
+                  <div className="flex items-center gap-2">
+                    {isAnalyzing ? (
+                      <Loader2 className="w-4 h-4 text-teal-400 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4 text-teal-400 group-hover:scale-110 transition-transform" />
+                    )}
+                    <span className="text-xs text-teal-300 font-medium">
+                      {isAnalyzing ? 'Analyzing...' : `${aiSuggestionsCount} section${aiSuggestionsCount > 1 ? 's' : ''} can be improved`}
+                    </span>
+                  </div>
+                  {!showAnalysis && !isAnalyzing && (
+                    <p className="text-[10px] text-teal-400/60 mt-1 text-left">
+                      Click to get AI-powered suggestions
+                    </p>
+                  )}
+                </button>
               </div>
             )}
+
+            {/* Analysis Results Panel */}
+            <AnimatePresence>
+              {showAnalysis && analysisResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mx-3 mt-3"
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <TrendingUp className="w-3 h-3 text-teal-400" />
+                      <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
+                        AI Analysis
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setShowAnalysis(false)}
+                      className="p-1 text-slate-600 hover:text-slate-400 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {analysisError && (
+                    <div className="mb-2 p-2 bg-yellow-900/20 border border-yellow-600/30 rounded text-[10px] text-yellow-400 flex items-center gap-1.5">
+                      <AlertCircle className="w-3 h-3 flex-shrink-0" />
+                      <span>Using offline suggestions</span>
+                    </div>
+                  )}
+
+                  {/* Section Cards */}
+                  <div className="space-y-2">
+                    {analysisResults.map((analysis) => (
+                      <motion.div
+                        key={analysis.sectionType}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-surface-800/50 border border-slate-700/50 rounded-lg overflow-hidden"
+                      >
+                        {/* Section Header */}
+                        <button
+                          onClick={() => setExpandedSection(
+                            expandedSection === analysis.sectionType ? null : analysis.sectionType
+                          )}
+                          className="w-full p-2.5 flex items-center justify-between hover:bg-surface-700/30 transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-slate-300 font-medium">
+                              {SECTION_LABELS[analysis.sectionType]}
+                            </span>
+                            <PriorityBadge priority={analysis.priority} />
+                          </div>
+                          <ChevronDown 
+                            className={`w-3.5 h-3.5 text-slate-500 transition-transform ${
+                              expandedSection === analysis.sectionType ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+
+                        {/* Selection Probability */}
+                        <div className="px-2.5 pb-2">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="text-[9px] text-slate-500 uppercase">Selection Chance</span>
+                          </div>
+                          <SelectionMeter probability={analysis.selectionProbability} />
+                        </div>
+
+                        {/* Expanded Content */}
+                        <AnimatePresence>
+                          {expandedSection === analysis.sectionType && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="border-t border-slate-700/50"
+                            >
+                              <div className="p-2.5 space-y-3">
+                                {/* Improvements */}
+                                {analysis.improvements.length > 0 && (
+                                  <div>
+                                    <div className="flex items-center gap-1.5 mb-1.5">
+                                      <Lightbulb className="w-3 h-3 text-yellow-400" />
+                                      <span className="text-[9px] text-slate-500 uppercase font-semibold">
+                                        Suggestions
+                                      </span>
+                                    </div>
+                                    <ul className="space-y-1">
+                                      {analysis.improvements.map((tip, i) => (
+                                        <li key={i} className="flex items-start gap-1.5 text-[10px] text-slate-400">
+                                          <span className="text-teal-400 mt-0.5">•</span>
+                                          <span>{tip}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {/* Strengths */}
+                                {analysis.strengths.length > 0 && (
+                                  <div>
+                                    <div className="flex items-center gap-1.5 mb-1.5">
+                                      <CheckCircle2 className="w-3 h-3 text-green-400" />
+                                      <span className="text-[9px] text-slate-500 uppercase font-semibold">
+                                        Strengths
+                                      </span>
+                                    </div>
+                                    <ul className="space-y-1">
+                                      {analysis.strengths.map((strength, i) => (
+                                        <li key={i} className="flex items-start gap-1.5 text-[10px] text-green-400/80">
+                                          <span className="mt-0.5">✓</span>
+                                          <span>{strength}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {/* Action Button */}
+                                <button
+                                  onClick={() => scrollToSection(analysis.sectionType)}
+                                  className="w-full py-1.5 bg-teal-600/20 hover:bg-teal-600/30 text-teal-400 text-[10px] font-medium rounded transition-colors"
+                                >
+                                  Edit {SECTION_LABELS[analysis.sectionType]}
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Session timeline */}
             {recentActions.length > 0 && (
               <div className="mx-3 mt-4 mb-3">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <Clock className="w-3 h-3 text-gray-500" />
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">
+                  <Clock className="w-3 h-3 text-slate-600" />
+                  <span className="text-[10px] text-slate-600 uppercase tracking-wider font-semibold">
                     Timeline
                   </span>
                 </div>
                 <div className="space-y-1.5">
                   {recentActions.map((entry, i) => (
                     <div key={i} className="flex items-center gap-2 text-[11px]">
-                      <span className="text-gray-600 w-10 text-right flex-shrink-0">
+                      <span className="text-slate-600 w-10 text-right flex-shrink-0">
                         {relativeTime(entry.ts)}
                       </span>
-                      <div className="w-1 h-1 rounded-full bg-gray-600 flex-shrink-0" />
-                      <span className="text-gray-400 truncate">
+                      <div className="w-1 h-1 rounded-full bg-surface-700 flex-shrink-0" />
+                      <span className="text-slate-500 truncate">
                         {formatAction(entry.action, entry.meta)}
                       </span>
                     </div>

@@ -1,131 +1,167 @@
+/**
+ * LandingPage.tsx
+ * -----------------------------------------------
+ * Public landing page. Editorial-style layout,
+ * warm dark tones, teal accent. Designed to feel
+ * hand-crafted rather than template-generated.
+ * -----------------------------------------------
+ */
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Zap, Palette, Download, Star, Check, ArrowRight } from 'lucide-react';
+import {
+  FileText,
+  Zap,
+  Palette,
+  Download,
+  Star,
+  ArrowRight,
+  Check,
+} from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { AuthModal } from '../components/auth/AuthModal';
 
+/* -- Feature data -- */
 const features = [
   {
-    icon: <Palette className="w-6 h-6" />,
+    icon: <Palette className="w-5 h-5" />,
     title: 'Beautiful Templates',
-    description: 'Choose from professionally designed templates that make you stand out.'
+    description:
+      'Professionally designed templates that feel polished without being flashy.',
   },
   {
-    icon: <Zap className="w-6 h-6" />,
+    icon: <Zap className="w-5 h-5" />,
     title: 'Real-time Preview',
-    description: 'See your changes instantly with our live preview as you edit.'
+    description:
+      'See every change as you type. Split-pane editor with instant rendering.',
   },
   {
-    icon: <Download className="w-6 h-6" />,
+    icon: <Download className="w-5 h-5" />,
     title: 'PDF Export',
-    description: 'Export high-quality PDFs that look perfect on any device.'
+    description:
+      'Download high-quality PDFs that render perfectly on any device.',
   },
 ];
 
+/* -- Testimonial data -- */
 const testimonials = [
   {
     name: 'Sarah Chen',
     role: 'Software Engineer',
-    image: 'https://images.unsplash.com/photo-1494790108755-2616b612b605?w=64&h=64&fit=crop&crop=face',
-    content: 'CV Builder helped me create a professional resume that landed me my dream job at a tech startup.'
+    content:
+      'Resumate helped me build a clean, professional CV that actually landed interviews.',
   },
   {
     name: 'Michael Rodriguez',
     role: 'Marketing Manager',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&h=64&fit=crop&crop=face',
-    content: 'The templates are gorgeous and the editing experience is incredibly smooth. Highly recommend!'
+    content:
+      'The editing experience is refreshingly smooth. No clutter, no distractions.',
   },
   {
     name: 'Emily Watson',
     role: 'Designer',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face',
-    content: 'Finally, a CV builder that understands design. The dark theme is a perfect touch for my aesthetic.'
-  }
+    content:
+      'Finally a CV tool that respects good design. Dark mode is a nice touch too.',
+  },
+];
+
+/* -- Capability bullets -- */
+const capabilities = [
+  'Drag-and-drop section reordering',
+  'AI-powered content suggestions',
+  'Application tracking built in',
+  'Session recovery -- never lose progress',
+  'Multiple template styles',
+  'One-click PDF export',
 ];
 
 export function LandingPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Hero Section */}
-      <section className="relative px-4 py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-transparent"></div>
-        <div className="max-w-7xl mx-auto text-center relative z-10">
+    <div className="min-h-screen bg-surface-950">
+
+      {/* ============ HERO ============ */}
+      <section className="relative px-4 pt-24 pb-20">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-                <FileText className="w-8 h-8 text-white" />
-              </div>
+            {/* -- Small badge above headline -- */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full border border-slate-700/60 bg-surface-900 text-sm text-slate-400">
+              <FileText className="w-3.5 h-3.5 text-teal-500" />
+              Free & open-source CV builder
             </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-100 mb-6">
-              Build Your
-              <span className="bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-                {' '}Dream CV
-              </span>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-100 leading-tight tracking-tight">
+              Build a resume that
+              <br />
+              <span className="text-teal-400">gets noticed</span>
             </h1>
-            
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Create stunning, professional resumes with our intuitive editor. Dark-themed, 
-              modern templates that make you stand out from the crowd.
+
+            <p className="mt-6 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              A focused, distraction-free editor with real-time preview, smart
+              templates, and AI assistance. No sign-up walls, no watermarks.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button size="lg" onClick={() => setShowAuthModal(true)} className="px-8 py-4">
-                Get Started Free
-                <ArrowRight className="w-5 h-5 ml-2" />
+
+            {/* -- CTA buttons -- */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-10">
+              <Button
+                size="lg"
+                onClick={() => setShowAuthModal(true)}
+                className="px-8"
+              >
+                Start building
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-              <Button variant="ghost" size="lg" className="px-8 py-4">
-                View Templates
+              <Button variant="ghost" size="lg" className="px-8">
+                View templates
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="px-4 py-20">
-        <div className="max-w-7xl mx-auto">
+      {/* ============ FEATURES ============ */}
+      <section id="features" className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-14"
           >
-            <h2 className="text-4xl font-bold text-gray-100 mb-4">
-              Everything You Need
+            <h2 className="text-3xl font-bold text-slate-100">
+              Everything you need
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Powerful features designed to help you create the perfect resume
+            <p className="mt-3 text-slate-400 max-w-lg mx-auto">
+              Straightforward tools that help you focus on content, not
+              formatting.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
                 viewport={{ once: true }}
               >
-                <Card className="text-center h-full" hover>
-                  <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <div className="text-purple-400">
-                      {feature.icon}
-                    </div>
+                <Card className="h-full">
+                  {/* -- Icon container -- */}
+                  <div className="w-10 h-10 bg-teal-600/15 rounded-lg flex items-center justify-center mb-4">
+                    <div className="text-teal-400">{feature.icon}</div>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-100 mb-3">
+                  <h3 className="text-lg font-semibold text-slate-100 mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-sm text-slate-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </Card>
@@ -135,44 +171,69 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Template Preview Section */}
-      <section className="px-4 py-20 bg-gray-800/30">
-        <div className="max-w-7xl mx-auto">
+      {/* ============ CAPABILITIES LIST ============ */}
+      <section className="px-4 py-16 border-y border-slate-800/60">
+        <div className="max-w-3xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-100 mb-4">
-              Beautiful Templates
+            <h2 className="text-2xl font-bold text-slate-100 mb-8 text-center">
+              What you get
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Choose from our collection of professionally designed templates
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+              {capabilities.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-teal-500 flex-shrink-0" />
+                  <span className="text-sm text-slate-300">{item}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============ TEMPLATE PREVIEW ============ */}
+      <section id="templates" className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mb-14"
+          >
+            <h2 className="text-3xl font-bold text-slate-100">
+              Pick a template
+            </h2>
+            <p className="mt-3 text-slate-400 max-w-lg mx-auto">
+              Three distinct styles to match your personality. Switch anytime.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {['Minimal', 'Modern', 'Creative'].map((template, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
                 viewport={{ once: true }}
               >
-                <Card className="overflow-hidden" hover>
-                  <div className="aspect-[3/4] bg-gray-900 rounded-lg border border-gray-600 overflow-hidden">
+                <Card hover>
+                  {/* -- Template wireframe preview -- */}
+                  <div className="aspect-[3/4] bg-surface-950 rounded-lg border border-slate-700/40 overflow-hidden mb-4">
                     <div className="p-4 space-y-2 text-xs">
                       {template === 'Minimal' && (
                         <>
-                          <div className="h-3 bg-gray-600 rounded w-2/3"></div>
-                          <div className="h-1 bg-gray-700 rounded w-1/2"></div>
-                          <div className="border-b border-gray-700 my-3"></div>
+                          <div className="h-3 bg-slate-700 rounded w-2/3"></div>
+                          <div className="h-1 bg-slate-800 rounded w-1/2"></div>
+                          <div className="border-b border-slate-800 my-3"></div>
                           <div className="space-y-1">
-                            <div className="h-1 bg-gray-700 rounded"></div>
-                            <div className="h-1 bg-gray-700 rounded w-4/5"></div>
+                            <div className="h-1 bg-slate-800 rounded"></div>
+                            <div className="h-1 bg-slate-800 rounded w-4/5"></div>
                           </div>
                         </>
                       )}
@@ -180,36 +241,40 @@ export function LandingPage() {
                         <>
                           <div className="flex space-x-2">
                             <div className="flex-1 space-y-1">
-                              <div className="h-2 bg-gray-600 rounded"></div>
-                              <div className="h-1 bg-gray-700 rounded w-3/4"></div>
+                              <div className="h-2 bg-slate-700 rounded"></div>
+                              <div className="h-1 bg-slate-800 rounded w-3/4"></div>
                             </div>
-                            <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
+                            <div className="w-8 h-8 bg-slate-800 rounded-full"></div>
                           </div>
                           <div className="grid grid-cols-2 gap-2 mt-3">
                             <div className="space-y-1">
-                              <div className="h-1 bg-purple-500 rounded w-1/2"></div>
-                              <div className="h-1 bg-gray-700 rounded"></div>
+                              <div className="h-1 bg-teal-600/60 rounded w-1/2"></div>
+                              <div className="h-1 bg-slate-800 rounded"></div>
                             </div>
                           </div>
                         </>
                       )}
                       {template === 'Creative' && (
                         <>
-                          <div className="bg-purple-600 h-6 rounded-t-lg -mx-4 -mt-4 mb-2"></div>
-                          <div className="h-2 bg-gray-600 rounded w-1/2 mx-auto text-center"></div>
+                          <div className="bg-teal-700 h-6 rounded-t-lg -mx-4 -mt-4 mb-2"></div>
+                          <div className="h-2 bg-slate-700 rounded w-1/2 mx-auto"></div>
                           <div className="space-y-1 mt-3">
-                            <div className="h-1 bg-purple-500 rounded w-1/3"></div>
-                            <div className="h-1 bg-gray-700 rounded"></div>
-                            <div className="h-1 bg-gray-700 rounded w-4/5"></div>
+                            <div className="h-1 bg-teal-600/60 rounded w-1/3"></div>
+                            <div className="h-1 bg-slate-800 rounded"></div>
+                            <div className="h-1 bg-slate-800 rounded w-4/5"></div>
                           </div>
                         </>
                       )}
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-gray-100 mb-2">{template}</h3>
-                    <p className="text-gray-400 text-sm">Perfect for {template.toLowerCase()} professionals</p>
-                  </div>
+                  <h3 className="text-base font-semibold text-slate-100">
+                    {template}
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-1">
+                    {template === 'Minimal' && 'Clean and focused'}
+                    {template === 'Modern' && 'Structured and bold'}
+                    {template === 'Creative' && 'Standout and expressive'}
+                  </p>
                 </Card>
               </motion.div>
             ))}
@@ -217,52 +282,48 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="px-4 py-20">
-        <div className="max-w-7xl mx-auto">
+      {/* ============ TESTIMONIALS ============ */}
+      <section className="px-4 py-20 border-t border-slate-800/60">
+        <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-14"
           >
-            <h2 className="text-4xl font-bold text-gray-100 mb-4">
-              What Our Users Say
+            <h2 className="text-3xl font-bold text-slate-100">
+              What people say
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Join thousands of professionals who've landed their dream jobs
-            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
                 viewport={{ once: true }}
               >
                 <Card className="h-full">
-                  <div className="flex items-center space-x-1 mb-4">
+                  {/* -- Star rating -- */}
+                  <div className="flex items-center space-x-0.5 mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <Star
+                        key={i}
+                        className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+                      />
                     ))}
                   </div>
-                  <p className="text-gray-300 mb-6 leading-relaxed">
-                    "{testimonial.content}"
+                  <p className="text-sm text-slate-300 mb-5 leading-relaxed">
+                    "{item.content}"
                   </p>
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <div>
-                      <p className="font-semibold text-gray-100">{testimonial.name}</p>
-                      <p className="text-sm text-gray-400">{testimonial.role}</p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">
+                      {item.name}
+                    </p>
+                    <p className="text-xs text-slate-500">{item.role}</p>
                   </div>
                 </Card>
               </motion.div>
@@ -271,33 +332,47 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="px-4 py-20 bg-gradient-to-r from-purple-600 to-purple-700">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* ============ BOTTOM CTA ============ */}
+      <section className="px-4 py-20 border-t border-slate-800/60">
+        <div className="max-w-2xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Ready to Build Your Perfect Resume?
+            <h2 className="text-3xl font-bold text-slate-100 mb-4">
+              Ready to get started?
             </h2>
-            <p className="text-xl text-purple-100 mb-8">
-              Join thousands of professionals and start creating your standout CV today
+            <p className="text-slate-400 mb-8">
+              It takes under a minute to set up. No credit card required.
             </p>
-            <Button 
-              size="lg" 
-              className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4"
+            <Button
+              size="lg"
+              className="px-10"
               onClick={() => setShowAuthModal(true)}
             >
-              Get Started Now
-              <ArrowRight className="w-5 h-5 ml-2" />
+              Create your resume
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </motion.div>
         </div>
       </section>
 
+      {/* -- Footer -- */}
+      <footer className="px-4 py-8 border-t border-slate-800/40">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2 text-slate-500 text-sm">
+            <FileText className="w-4 h-4" />
+            Resumate
+          </div>
+          <p className="text-xs text-slate-600">
+            Built with care. Not by a template.
+          </p>
+        </div>
+      </footer>
+
+      {/* -- Auth modal -- */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}

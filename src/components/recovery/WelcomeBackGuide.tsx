@@ -9,7 +9,7 @@
  * spine-hangar global re-entry guide
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
@@ -22,6 +22,8 @@ import {
   LayoutDashboard,
   Lightbulb,
   X,
+  Edit3,
+  Clock,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
@@ -48,9 +50,20 @@ function formatDuration(ms: number): string {
   return 'a few moments';
 }
 
+// -- Format relative time for last edit --
+function formatRelativeTime(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  
+  if (hours > 0) return `${hours}h ago`;
+  if (minutes > 0) return `${minutes}m ago`;
+  return 'just now';
+}
+
 // -- Timeline dot color based on action type --
 function getActionColor(action: string): string {
-  if (action.includes('edit') || action.includes('section')) return '#7c3aed'; // purple
+  if (action.includes('edit') || action.includes('section')) return '#14b8a6'; // teal
   if (action.includes('ai') || action.includes('chat')) return '#3b82f6'; // blue
   if (action.includes('export') || action.includes('pdf')) return '#22c55e'; // green
   if (action.includes('app') || action.includes('track')) return '#f59e0b'; // amber
@@ -120,19 +133,19 @@ export function WelcomeBackGuide() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 40 }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="w-full max-w-md bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl overflow-hidden relative"
+          className="w-full max-w-md bg-surface-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden relative"
         >
           {/* Close button */}
           <button
             onClick={handleDismiss}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-300 transition-colors z-10"
+            className="absolute top-4 right-4 text-slate-500 hover:text-slate-300 transition-colors z-10"
             aria-label="Dismiss"
           >
             <X className="w-5 h-5" />
           </button>
 
           {/* -- Gradient accent bar at top -- */}
-          <div className="h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-600" />
+          <div className="h-1 bg-gradient-to-r from-accent-500 via-blue-500 to-accent-600" />
 
           {/* -- Header -- */}
           <div className="p-6 pb-3">
@@ -148,7 +161,7 @@ export function WelcomeBackGuide() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="text-sm text-gray-400 mt-1"
+              className="text-sm text-slate-400 mt-1"
             >
               You were away for {formatDuration(timeSince)}
             </motion.p>
@@ -159,20 +172,20 @@ export function WelcomeBackGuide() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mx-6 p-3 bg-gray-800/70 border border-gray-700/50 rounded-xl flex items-center gap-3"
+            className="mx-6 p-3 bg-surface-800/70 border border-slate-700/50 rounded-xl flex items-center gap-3"
           >
-            <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 flex-shrink-0">
+            <div className="w-10 h-10 bg-accent-500/20 rounded-lg flex items-center justify-center text-accent-400 flex-shrink-0">
               {ROUTE_ICONS[briefing.lastPage] || <MapPin className="w-5 h-5" />}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
                 Last location
               </p>
               <p className="text-sm text-white font-medium">
                 {briefing.lastPageLabel}
               </p>
               {briefing.lastCvTitle && (
-                <p className="text-xs text-gray-400 mt-0.5 truncate">
+                <p className="text-xs text-slate-400 mt-0.5 truncate">
                   Resume: {briefing.lastCvTitle}
                 </p>
               )}
@@ -184,18 +197,60 @@ export function WelcomeBackGuide() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="mx-6 mt-4 p-3 bg-gray-800/40 rounded-xl"
+            className="mx-6 mt-4 p-3 bg-surface-800/40 rounded-xl"
           >
             <div className="flex items-center gap-2 mb-2">
-              <History className="w-3.5 h-3.5 text-gray-500" />
-              <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+              <History className="w-3.5 h-3.5 text-slate-500" />
+              <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
                 What you were doing
               </span>
             </div>
-            <p className="text-sm text-gray-300 leading-relaxed">
+            <p className="text-sm text-slate-300 leading-relaxed">
               {briefing.summary}
             </p>
           </motion.div>
+
+          {/* -- Last Edit Highlight (where you left off) -- */}
+          {briefing.lastEdit && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
+              className="mx-6 mt-4 p-3 bg-gradient-to-r from-accent-900/30 to-blue-900/20 border border-accent-500/30 rounded-xl"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <Edit3 className="w-3.5 h-3.5 text-accent-400" />
+                <span className="text-xs text-accent-400 uppercase tracking-wider font-semibold">
+                  Last Edit
+                </span>
+                <div className="flex-1" />
+                <div className="flex items-center gap-1 text-slate-500">
+                  <Clock className="w-3 h-3" />
+                  <span className="text-xs">{formatRelativeTime(briefing.lastEdit.timestamp)}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-accent-500/20 rounded-lg flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-accent-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white font-medium">
+                    {briefing.lastEdit.sectionTitle}
+                  </p>
+                  {briefing.lastEdit.fieldName && (
+                    <p className="text-xs text-slate-400 truncate">
+                      Field: {briefing.lastEdit.fieldName}
+                    </p>
+                  )}
+                </div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="w-2 h-2 bg-accent-400 rounded-full"
+                />
+              </div>
+            </motion.div>
+          )}
 
           {/* -- Recent Actions Timeline -- */}
           {briefing.recentActions.length > 0 && (
@@ -218,7 +273,7 @@ export function WelcomeBackGuide() {
                       className="w-2 h-2 rounded-full flex-shrink-0"
                       style={{ backgroundColor: getActionColor(action) }}
                     />
-                    <span className="text-xs text-gray-400">{action}</span>
+                    <span className="text-xs text-slate-400">{action}</span>
                   </motion.div>
                 ))}
               </div>
@@ -230,10 +285,10 @@ export function WelcomeBackGuide() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mx-6 mt-4 p-3 bg-purple-900/20 border border-purple-500/20 rounded-xl flex items-start gap-2.5"
+            className="mx-6 mt-4 p-3 bg-accent-900/20 border border-accent-500/20 rounded-xl flex items-start gap-2.5"
           >
-            <Lightbulb className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-purple-300 leading-relaxed">
+            <Lightbulb className="w-4 h-4 text-accent-400 mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-accent-300 leading-relaxed">
               {briefing.suggestion}
             </p>
           </motion.div>

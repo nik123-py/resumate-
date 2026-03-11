@@ -1,4 +1,4 @@
-import React from 'react';
+/* Preview page */
 import { ArrowLeft, Download, Share2, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCV } from '../contexts/CVContext';
@@ -7,7 +7,7 @@ import { CVPreview } from '../components/preview/CVPreview';
 
 export function PreviewPage() {
   const navigate = useNavigate();
-  const { currentCV, setCurrentCV } = useCV();
+  const { currentCV } = useCV();
 
   const exportToPDF = async () => {
     if (!currentCV) return;
@@ -60,9 +60,9 @@ export function PreviewPage() {
 
   if (!currentCV) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-400 mb-4">No CV selected for preview</p>
+          <p className="text-slate-400 mb-4">No CV selected for preview</p>
           <Button onClick={() => navigate('/dashboard')}>
             Back to Dashboard
           </Button>
@@ -72,9 +72,9 @@ export function PreviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-950">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-lg border-b border-gray-700">
+      <div className="sticky top-0 z-40 bg-surface-950/95 backdrop-blur-lg border-b border-slate-800">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -85,8 +85,8 @@ export function PreviewPage() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-semibold text-gray-100">{currentCV.title}</h1>
-              <p className="text-sm text-gray-400">Preview</p>
+              <h1 className="text-xl font-semibold text-slate-100">{currentCV.title}</h1>
+              <p className="text-sm text-slate-400">Preview</p>
             </div>
           </div>
           

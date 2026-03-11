@@ -18,6 +18,13 @@ export interface ActivityEntry {
   detail?: string;
 }
 
+export interface LastEditInfo {
+  sectionType: string;
+  sectionTitle: string;
+  fieldName?: string;
+  timestamp: number;
+}
+
 export interface GlobalSessionState {
   lastRoute: string;
   lastActiveAt: number;
@@ -26,6 +33,7 @@ export interface GlobalSessionState {
   activityLog: ActivityEntry[];
   totalSessionCount: number;
   wasGracefulExit: boolean;
+  lastEdit: LastEditInfo | null; // Track the exact last edit location
 }
 
 // -- Constants --
@@ -92,6 +100,7 @@ class GlobalSessionService {
       activityLog: [],
       totalSessionCount: 0,
       wasGracefulExit: true,
+      lastEdit: null,
     };
   }
 
@@ -133,6 +142,30 @@ class GlobalSessionService {
     this.state.lastCvTitle = cvTitle;
     this.state.lastActiveAt = Date.now();
     this.persist();
+  }
+
+  /**
+   * Track the exact edit location (section and field).
+   * This enables precise "where you left off" highlighting.
+   */
+  trackLastEdit(sectionType: string, sectionTitle: string, fieldName?: string): void {
+    this.state.lastEdit = {
+      sectionType,
+      sectionTitle,
+      fieldName,
+      timestamp: Date.now(),
+    };
+    this.state.lastActiveAt = Date.now();
+    this.pushActivity('/editor', 'section_edited', `${sectionTitle}${fieldName ? ` - ${fieldName}` : ''}`);
+    this.persist();
+    console.info('[GlobalSession] tracked edit:', sectionType, sectionTitle, fieldName);
+  }
+
+  /**
+   * Get the last edit info for highlighting.
+   */
+  getLastEdit(): LastEditInfo | null {
+    return this.state.lastEdit;
   }
 
   /**
@@ -189,6 +222,7 @@ class GlobalSessionService {
     recentActions: string[];
     suggestion: string;
     lastCvTitle: string | null;
+    lastEdit: LastEditInfo | null;
   } {
     const state = this.state;
     const lastPageLabel = ROUTE_LABELS[state.lastRoute] || 'the app';
@@ -217,6 +251,7 @@ class GlobalSessionService {
       recentActions,
       suggestion,
       lastCvTitle: state.lastCvTitle,
+      lastEdit: state.lastEdit,
     };
   }
 

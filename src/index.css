@@ -1,3 +1,51 @@
+/* -- Import Inter font for clean typography -- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ------------------------------------------------
+   Resumate -- Global Styles
+   Warm dark theme with teal accent
+   ------------------------------------------------ */
+
+@layer base {
+  /* -- Smoother font rendering -- */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-surface-950 text-slate-200 font-sans;
+  }
+
+  /* -- Custom scrollbar (subtle, not flashy) -- */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-700 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-600;
+  }
+
+  /* -- Selection highlight -- */
+  ::selection {
+    @apply bg-teal-600/30 text-white;
+  }
+}
+
+@layer components {
+  /* -- Subtle focus ring used across interactive elements -- */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:ring-offset-1 focus:ring-offset-surface-950;
+  }
+}

@@ -1,3 +1,11 @@
+/**
+ * CVCard.tsx
+ * -----------------------------------------------
+ * Resume card shown in the dashboard grid.
+ * Warm surface colors, clean hover actions.
+ * -----------------------------------------------
+ */
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MoreVertical, Edit, Copy, Trash2, Download, Share2, Eye } from 'lucide-react';
@@ -28,23 +36,25 @@ export function CVCard({ cv, onEdit, onDuplicate, onDelete, onPreview }: CVCardP
     <Card className="relative group cursor-pointer" hover>
       <div onClick={() => onEdit(cv)} className="space-y-4">
         {/* CV Preview Thumbnail */}
-        <div className="aspect-[3/4] bg-gray-900 rounded-lg border border-gray-600 overflow-hidden">
+        <div className="aspect-[3/4] bg-surface-950 rounded-lg border border-slate-700/40 overflow-hidden">
           <div className="p-4 space-y-2 text-xs">
-            <div className="h-2 bg-gray-600 rounded w-3/4"></div>
-            <div className="h-1 bg-gray-700 rounded w-1/2"></div>
+            <div className="h-2 bg-slate-700 rounded w-3/4"></div>
+            <div className="h-1 bg-slate-800 rounded w-1/2"></div>
             <div className="space-y-1 mt-4">
-              <div className="h-1 bg-gray-700 rounded"></div>
-              <div className="h-1 bg-gray-700 rounded w-5/6"></div>
-              <div className="h-1 bg-gray-700 rounded w-4/6"></div>
+              <div className="h-1 bg-slate-800 rounded"></div>
+              <div className="h-1 bg-slate-800 rounded w-5/6"></div>
+              <div className="h-1 bg-slate-800 rounded w-4/6"></div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-gray-100 truncate">{cv.title}</h3>
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="space-y-1.5">
+          <h3 className="text-base font-semibold text-slate-100 truncate">{cv.title}</h3>
+          <div className="flex items-center justify-between text-xs text-slate-500">
             <span>Updated {formatDate(cv.updatedAt)}</span>
-            <span className="capitalize">{cv.templateId}</span>
+            <span className="capitalize px-2 py-0.5 bg-slate-800 rounded text-slate-400">
+              {cv.templateId}
+            </span>
           </div>
         </div>
       </div>
@@ -59,59 +69,33 @@ export function CVCard({ cv, onEdit, onDuplicate, onDelete, onPreview }: CVCardP
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
-            className="p-2"
+            className="p-2 bg-surface-900/80"
           >
             <MoreVertical className="w-4 h-4" />
           </Button>
 
           {showMenu && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg py-1 z-10"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute right-0 mt-1 w-44 bg-surface-900 border border-slate-700/60 rounded-lg shadow-xl py-1 z-10"
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(cv);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
-              >
-                <Edit className="w-4 h-4" />
-                <span>Edit</span>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPreview(cv);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
-              >
-                <Eye className="w-4 h-4" />
-                <span>Preview</span>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDuplicate(cv.id);
-                  setShowMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
-              >
-                <Copy className="w-4 h-4" />
-                <span>Duplicate</span>
-              </button>
-              <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <Download className="w-4 h-4" />
-                <span>Download</span>
-              </button>
-              <button className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                <Share2 className="w-4 h-4" />
-                <span>Share</span>
-              </button>
-              <hr className="border-gray-700 my-1" />
+              <DropdownItem icon={<Edit className="w-4 h-4" />} onClick={(e) => { e.stopPropagation(); onEdit(cv); setShowMenu(false); }}>
+                Edit
+              </DropdownItem>
+              <DropdownItem icon={<Eye className="w-4 h-4" />} onClick={(e) => { e.stopPropagation(); onPreview(cv); setShowMenu(false); }}>
+                Preview
+              </DropdownItem>
+              <DropdownItem icon={<Copy className="w-4 h-4" />} onClick={(e) => { e.stopPropagation(); onDuplicate(cv.id); setShowMenu(false); }}>
+                Duplicate
+              </DropdownItem>
+              <DropdownItem icon={<Download className="w-4 h-4" />} onClick={(e) => { e.stopPropagation(); }}>
+                Download
+              </DropdownItem>
+              <DropdownItem icon={<Share2 className="w-4 h-4" />} onClick={(e) => { e.stopPropagation(); }}>
+                Share
+              </DropdownItem>
+              <hr className="border-slate-700/60 my-1" />
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -120,7 +104,7 @@ export function CVCard({ cv, onEdit, onDuplicate, onDelete, onPreview }: CVCardP
                   }
                   setShowMenu(false);
                 }}
-                className="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-700 flex items-center space-x-2"
+                className="w-full px-4 py-2 text-left text-red-400 hover:bg-slate-800 flex items-center space-x-2 text-sm"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Delete</span>
@@ -130,5 +114,26 @@ export function CVCard({ cv, onEdit, onDuplicate, onDelete, onPreview }: CVCardP
         </div>
       </div>
     </Card>
+  );
+}
+
+/* -- Helper: Dropdown menu item -- */
+function DropdownItem({
+  icon,
+  children,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  onClick: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full px-4 py-2 text-left text-slate-300 hover:bg-slate-800 flex items-center space-x-2 text-sm"
+    >
+      {icon}
+      <span>{children}</span>
+    </button>
   );
 }
